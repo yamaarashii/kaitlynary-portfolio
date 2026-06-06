@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kaitlyn — Money Movement Product Owner</title>
+  <meta name="description" content="Finance PO building cross-border invoicing & payment systems across 60+ countries." />
+  <meta property="og:title" content="Kaitlyn — Money Movement Product Owner" />
+  <meta property="og:description" content="Finance PO building cross-border invoicing & payment systems across 60+ countries." />
+  <meta property="og:type" content="website" />
+  <!-- <meta property="og:image" content="https://your-cover-image.png" /> -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --thistle: #D6C8DF;
+      --mocha: #332927;
+      --cream: #FAF7F5;
+      --mocha-70: rgba(51, 41, 39, 0.70);
+      --mocha-45: rgba(51, 41, 39, 0.45);
+      --radius: 22px;
+      --serif: "Fraunces", Georgia, serif;
+      --sans: "Space Grotesk", system-ui, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--sans);
+      color: var(--mocha);
+      background: var(--cream);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    .wrap { max-width: 920px; margin: 0 auto; padding: 0 28px; }
+
+    .reveal { opacity: 0; transform: translateY(20px); transition: opacity .7s ease, transform .7s ease; }
+    .reveal.in { opacity: 1; transform: none; }
+
+    /* HERO */
+    header.hero { padding: 110px 0 60px; }
+    .eyebrow { font-size: 0.82rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--mocha-70); font-weight: 600; margin-bottom: 22px; }
+    .hero h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(2.6rem, 7vw, 4.6rem); line-height: 1.04; letter-spacing: -0.02em; }
+    .hero h1 .name { font-style: italic; }
+    .hero .tagline { font-family: var(--serif); font-style: italic; font-size: clamp(1.2rem, 3vw, 1.7rem); color: var(--mocha-70); margin-top: 22px; max-width: 620px; }
+    .hero .subline { margin-top: 14px; color: var(--mocha-45); font-size: 0.98rem; letter-spacing: 0.02em; }
+
+    /* METRICS — solid thistle blocks */
+    .metrics { display: flex; flex-wrap: wrap; gap: 16px; padding: 18px 0 70px; }
+    .metric { background: var(--thistle); border-radius: var(--radius); padding: 22px 26px; min-width: 150px; flex: 1; }
+    .metric .num { font-family: var(--serif); font-size: 2.4rem; font-weight: 600; line-height: 1; }
+    .metric .lbl { font-size: 0.82rem; color: var(--mocha-70); margin-top: 8px; letter-spacing: 0.02em; }
+
+    section { padding: 56px 0; }
+    .sec-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 34px; }
+    .sec-head h2 { font-family: var(--serif); font-weight: 600; font-size: clamp(1.7rem, 4vw, 2.4rem); letter-spacing: -0.01em; }
+    .sec-head .rule { flex: 1; height: 1px; background: var(--thistle); }
+
+    .about p { font-size: clamp(1.05rem, 2.2vw, 1.25rem); max-width: 700px; color: var(--mocha); }
+    .about .intro { color: var(--mocha-70); font-style: italic; font-family: var(--serif); }
+
+    /* SOLID thistle band for the skills section */
+    .band { background: var(--thistle); }
+    .band .sec-head .rule { background: rgba(51,41,39,0.25); }
+
+    /* WRITING — solid white cards */
+    .cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
+    .card { display: flex; flex-direction: column; background: #FFFFFF; border: 1px solid var(--thistle); border-radius: var(--radius); overflow: hidden; text-decoration: none; color: inherit; transition: transform .35s ease, box-shadow .35s ease, border-color .35s ease; }
+    .card:hover { transform: translateY(-6px); box-shadow: 0 18px 40px -22px rgba(51,41,39,0.45); border-color: var(--mocha); }
+    .card .thumb { aspect-ratio: 16/9; background: var(--thistle); overflow: hidden; }
+    .card .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .card .thumb.placeholder { display: flex; align-items: center; justify-content: center; }
+    .card .thumb.placeholder span { font-family: var(--serif); font-style: italic; font-size: 2rem; color: rgba(51,41,39,0.5); }
+    .card .body { padding: 22px 24px 26px; display: flex; flex-direction: column; flex: 1; }
+    .card .date { font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--mocha-45); }
+    .card h3 { font-family: var(--serif); font-weight: 600; font-size: 1.3rem; line-height: 1.2; margin: 10px 0 12px; }
+    .card .excerpt { font-size: 0.95rem; color: var(--mocha-70); flex: 1; }
+    .card .read { margin-top: 18px; font-weight: 600; font-size: 0.9rem; }
+    .card .read::after { content: " \2192"; transition: margin .25s ease; display: inline-block; }
+    .card:hover .read::after { margin-left: 5px; }
+
+    .feed-msg { padding: 40px; text-align: center; color: var(--mocha-70); border: 1px dashed var(--thistle); border-radius: var(--radius); }
+    .feed-msg a { color: var(--mocha); font-weight: 600; }
+
+    /* CHIPS */
+    .glabel { font-size: 0.82rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--mocha-70); font-weight: 600; margin-bottom: 14px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 10px; }
+    .chip { padding: 9px 16px; border-radius: 999px; font-size: 0.9rem; font-weight: 500; background: #FFFFFF; color: var(--mocha); border: 1px solid var(--mocha); }
+
+    footer { background: var(--mocha); color: var(--cream); border-radius: 32px 32px 0 0; margin-top: 0; padding: 70px 0 50px; }
+    footer h2 { font-family: var(--serif); font-weight: 600; font-size: clamp(1.8rem, 5vw, 2.8rem); letter-spacing: -0.01em; }
+    footer .links { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 30px; }
+    footer a.btn { text-decoration: none; color: var(--cream); border: 1px solid rgba(250,247,245,0.4); padding: 12px 22px; border-radius: 999px; font-weight: 500; transition: background .25s ease, color .25s ease; }
+    footer a.btn:hover { background: var(--thistle); color: var(--mocha); border-color: var(--thistle); }
+    footer .copy { margin-top: 48px; font-size: 0.82rem; color: rgba(250,247,245,0.5); }
+
+    @media (max-width: 640px) {
+      .cards { grid-template-columns: 1fr; }
+      header.hero { padding: 80px 0 40px; }
+      .metric { min-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero reveal">
+      <p class="eyebrow" id="hero-eyebrow"></p>
+      <h1>Hi, I'm <span class="name" id="hero-name"></span></h1>
+      <p class="tagline" id="hero-tagline"></p>
+      <p class="subline" id="hero-subline"></p>
+    </header>
+
+    <div class="metrics reveal" id="metrics"></div>
+
+    <section class="about reveal">
+      <div class="sec-head"><h2>About</h2><span class="rule"></span></div>
+      <p id="about-text"></p>
+    </section>
+
+    <section class="reveal">
+      <div class="sec-head"><h2>Writing</h2><span class="rule"></span></div>
+      <p class="about intro" id="writing-intro" style="margin-bottom:30px"></p>
+      <div class="cards" id="cards"></div>
+    </section>
+  </div>
+
+  <div class="band reveal">
+    <div class="wrap">
+      <section>
+        <div class="sec-head"><h2>Skills</h2><span class="rule"></span></div>
+        <div class="chips" id="skills"></div>
+      </section>
+    </div>
+  </div>
+
+  <footer class="reveal">
+    <div class="wrap">
+      <h2>Let's talk.</h2>
+      <div class="links" id="contact"></div>
+      <p class="copy" id="copy"></p>
+    </div>
+  </footer>
+
+  <script>
+    /* ============================================================
+       EDIT YOUR CONTENT HERE — the only part you change.
+       (Posts come automatically from Substack, not here.)
+       Leave a value "" or starting with "[" to hide it.
+       ============================================================ */
+    const CONFIG = {
+      name: "Kaitlyn",
+      title: "Finance Product Owner",
+      tagline: "Building invoicing, payments and compliance platforms across 60+ countries.",
+      subline: "From the intersection of finance, product and technology.",
+      about: "Finance Product Owner with a Business Analysis foundation, leading products across Europe, LATAM and Asia. Experienced in e-invoicing compliance, payment workflows, ERP integrations and finance automation, translating complex business requirements into scalable digital solutions.",
+      writingIntro: "Skicky notes on finance domain, business analysis, product ownership, project delivery and building with AI..",
+      metrics: [
+        { label: "Countries", value: 60, suffix: "+" },
+        { label: "Years in finance products", value: 4, suffix: "+" },
+        { label: "E-invoicing projects", value: 6, suffix: "" },
+        { label: "Workflows transformed", value: 50, suffix: "+" }
+      ],
+      skills: ["E-Invoicing Compliance", "Payment Flows", "ERP Integration", "Product Ownership", "Business Analysis", "Process Automation", "GovTech"],
+      contact: {
+        linkedin: "https://www.linkedin.com/in/phuonglt13/",
+        substack: "https://kaitlynway.substack.com",
+        email: "phuonglt13.sic@gmail.com",
+        resume: ""
+      }
+    };
+
+    const isReal = (v) => typeof v === "string" && v.trim() !== "" && !v.trim().startsWith("[");
+    const isNum = (v) => typeof v === "number" && isFinite(v);
+    const el = (id) => document.getElementById(id);
+
+    function fmtDate(str) {
+      if (!str) return "";
+      const d = new Date(str);
+      if (isNaN(d)) return "";
+      return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+    }
+
+    el("hero-eyebrow").textContent = CONFIG.title;
+    el("hero-name").textContent = CONFIG.name;
+    el("hero-tagline").textContent = CONFIG.tagline;
+    if (isReal(CONFIG.subline)) el("hero-subline").textContent = CONFIG.subline;
+    el("about-text").textContent = CONFIG.about;
+    el("writing-intro").textContent = CONFIG.writingIntro;
+
+    CONFIG.metrics.filter(m => isNum(m.value)).forEach(m => {
+      const d = document.createElement("div");
+      d.className = "metric";
+      d.innerHTML = '<div class="num" data-target="' + m.value + '">0' + (m.suffix || "") + '</div><div class="lbl">' + m.label + '</div>';
+      el("metrics").appendChild(d);
+    });
+
+    CONFIG.skills.forEach(s => { const c = document.createElement("span"); c.className = "chip"; c.textContent = s; el("skills").appendChild(c); });
+
+    const C = CONFIG.contact;
+    const btns = [];
+    if (isReal(C.linkedin)) btns.push('<a class="btn" href="' + C.linkedin + '" target="_blank" rel="noopener">LinkedIn</a>');
+    if (isReal(C.substack)) btns.push('<a class="btn" href="' + C.substack + '" target="_blank" rel="noopener">Substack</a>');
+    if (isReal(C.email)) btns.push('<a class="btn" href="mailto:' + C.email + '">Email</a>');
+    if (isReal(C.resume)) btns.push('<a class="btn" href="' + C.resume + '" target="_blank" rel="noopener">Resume</a>');
+    el("contact").innerHTML = btns.join("");
+    el("copy").textContent = "\u00A9 " + new Date().getFullYear() + " " + CONFIG.name;
+
+    async function loadPosts() {
+      const box = el("cards");
+      try {
+        const res = await fetch("/api/posts");
+        const data = await res.json();
+        const posts = (data && data.posts) || [];
+        if (data.error || posts.length === 0) {
+          box.outerHTML = '<div class="feed-msg">Posts are taking a break. Read everything on <a href="' + C.substack + '" target="_blank" rel="noopener">Substack &rarr;</a></div>';
+          return;
+        }
+        box.innerHTML = posts.map(p => (
+          '<a class="card" href="' + p.link + '" target="_blank" rel="noopener">' +
+            (p.coverImage
+              ? '<div class="thumb"><img src="' + p.coverImage + '" alt="" loading="lazy" /></div>'
+              : '<div class="thumb placeholder"><span>' + ((p.title || "K")[0]) + '</span></div>') +
+            '<div class="body">' +
+              '<span class="date">' + fmtDate(p.pubDate) + '</span>' +
+              '<h3>' + p.title + '</h3>' +
+              '<p class="excerpt">' + (p.excerpt || "") + '</p>' +
+              '<span class="read">Read on Substack</span>' +
+            '</div>' +
+          '</a>'
+        )).join("");
+      } catch (e) {
+        box.outerHTML = '<div class="feed-msg">Couldn\u0027t load posts right now. Read everything on <a href="' + C.substack + '" target="_blank" rel="noopener">Substack &rarr;</a></div>';
+      }
+    }
+    loadPosts();
+
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(en => {
+        if (!en.isIntersecting) return;
+        en.target.classList.add("in");
+        const nums = en.target.querySelectorAll ? en.target.querySelectorAll(".num[data-target]") : [];
+        nums.forEach(countUp);
+        io.unobserve(en.target);
+      });
+    }, { threshold: 0.15 });
+    document.querySelectorAll(".reveal").forEach(s => io.observe(s));
+
+    function countUp(node) {
+      const target = parseFloat(node.dataset.target);
+      const suffix = node.textContent.replace(/[0-9.]/g, "");
+      const dur = 1100; const start = performance.now();
+      function tick(now) {
+        const t = Math.min((now - start) / dur, 1);
+        const eased = 1 - Math.pow(1 - t, 3);
+        node.textContent = Math.round(target * eased) + suffix;
+        if (t < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
+  </script>
+</body>
+</html>
