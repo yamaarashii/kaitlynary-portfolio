@@ -20,16 +20,31 @@ function toArray(v) {
   return Array.isArray(v) ? v : [v];
 }
 
-// Strip HTML tags and collapse whitespace.
-function stripHtml(html) {
-  return String(html)
-    .replace(/<[^>]*>/g, " ")
+// Decode HTML entities: numeric hex, numeric decimal, and common named ones.
+function safeCodePoint(n) {
+  try {
+    return String.fromCodePoint(n);
+  } catch {
+    return "";
+  }
+}
+
+function decodeEntities(str) {
+  return String(str)
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, h) => safeCodePoint(parseInt(h, 16)))
+    .replace(/&#(\d+);/g, (_, d) => safeCodePoint(parseInt(d, 10)))
     .replace(/&nbsp;/g, " ")
-    .replace(/&amp;/g, "&")
-    .replace(/&#39;|&apos;/g, "'")
     .replace(/&quot;/g, '"')
-    .replace(/\s+/g, " ")
-    .trim();
+    .replace(/&apos;/g, "'")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&amp;/g, "&"); // keep &amp; last so it doesn't double-decode
+}
+
+// Strip HTML tags, decode entities, collapse whitespace.
+function stripHtml(html) {
+  const noTags = String(html).replace(/<[^>]*>/g, " ");
+  return decodeEntities(noTags).replace(/\s+/g, " ").trim();
 }
 
 function makeExcerpt(html, words = 32) {
@@ -55,6 +70,14 @@ function enclosureImage(item) {
 
 // ---- core parsing (exported so we can unit-test it without the network) ---
 
+// Posts to hide from the portfolio. Add a title here (case-insensitive) to exclude it.
+const EXCLUDE = ["unpublished thoughts"];
+
+function isExcluded(post) {
+  const hay = `${post.title} ${post.link}`.toLowerCase();
+  return EXCLUDE.some((term) => hay.includes(term.toLowerCase()));
+}
+
 export function parseFeed(xml) {
   const parser = new XMLParser({
     ignoreAttributes: false,
@@ -63,18 +86,19 @@ export function parseFeed(xml) {
   const data = parser.parse(xml);
   const items = toArray(data?.rss?.channel?.item);
 
-  return items.map((it) => {
-    const content =
-      pickText(it["content:encoded"]) || pickText(it.description) || "";
-    return {
-      title: pickText(it.title),
-      link: pickText(it.link),
-      pubDate: it.pubDate || null,
-      excerpt: makeExcerpt(content),
-      coverImage: firstImage(content) || enclosureImage(it) || null,
-      categories: toArray(it.category).map(pickText).filter(Boolean),
-    };
-  });
+  return items
+    .map((it) => {
+      const content =
+        pickText(it["content:encoded"]) || pickText(it.description) || "";
+      return {
+        title: decodeEntities(pickText(it.title)),
+        link: pickText(it.link),
+        pubDate: it.pubDate || null,
+        excerpt: makeExcerpt(content),
+        coverImage: firstImage(content) || enclosureImage(it) || null,
+      };
+    })
+    .filter((post) => !isExcluded(post));
 }
 
 // ---- Vercel serverless handler -------------------------------------------
