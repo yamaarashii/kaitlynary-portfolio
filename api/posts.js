@@ -71,7 +71,7 @@ function enclosureImage(item) {
 // ---- core parsing (exported so we can unit-test it without the network) ---
 
 // Posts to hide from the portfolio. Add a title here (case-insensitive) to exclude it.
-const EXCLUDE = ["unpublished thoughts","hi 2026","How do I find creativity in the IT Outsourcing environment?"];
+const EXCLUDE = ["unpublished thoughts","hi 2026","How do I find creativity in the IT Outsourcing environment?","Pour-Over vs. Espresso Shot: Public & Private Finance in ERP","Me wrapping-up some of my sub-versions in 2024",];
 
 function isExcluded(post) {
   const hay = `${post.title} ${post.link}`.toLowerCase();
