@@ -106,20 +106,21 @@
 
     /* WRITING */
     .cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
-    .post { display: flex; flex-direction: column; background: #FFFFFF; border: 1px solid var(--thistle); border-radius: var(--radius); overflow: hidden; transition: transform .35s ease, box-shadow .35s ease, border-color .35s ease; }
-    .post:hover { transform: translateY(-4px); box-shadow: 0 18px 40px -22px rgba(51,41,39,0.4); border-color: var(--mocha); }
-    .post-img { aspect-ratio: 16/9; background: var(--thistle); overflow: hidden; }
-    .post-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .post-body { padding: 22px 24px 24px; display: flex; flex-direction: column; flex: 1; }
-    .post .date { font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--mocha-45); }
-    .post h3 { font-family: var(--serif); font-weight: 600; font-size: 1.3rem; line-height: 1.2; margin: 10px 0 12px; }
-    .post .excerpt { font-size: 0.96rem; color: var(--mocha-70); }
-    .post .more { margin-top: 12px; color: var(--mocha-70); font-size: 0.96rem; }
-    .post .more p { margin-bottom: 12px; }
-    .post-link { color: var(--mocha); font-weight: 600; font-size: 0.92rem; text-decoration: none; border-bottom: 1px solid var(--thistle); }
-    .post-link:hover { border-color: var(--mocha); }
-    .see-toggle { align-self: flex-start; margin-top: 16px; background: none; border: 1px solid var(--mocha); color: var(--mocha); padding: 8px 16px; border-radius: 999px; font-family: var(--sans); font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: background .2s ease, color .2s ease; }
-    .see-toggle:hover { background: var(--mocha); color: var(--cream); }
+    .card { display: flex; flex-direction: column; background: #FFFFFF; border: 1px solid var(--thistle); border-radius: var(--radius); overflow: hidden; text-decoration: none; color: inherit; transition: transform .35s ease, box-shadow .35s ease, border-color .35s ease; }
+    .card:hover { transform: translateY(-6px); box-shadow: 0 18px 40px -22px rgba(51,41,39,0.45); border-color: var(--mocha); }
+    .card .thumb { aspect-ratio: 16/9; background: var(--thistle); overflow: hidden; }
+    .card .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .card .thumb.placeholder { display: flex; align-items: center; justify-content: center; }
+    .card .thumb.placeholder span { font-family: var(--serif); font-style: italic; font-size: 2rem; color: rgba(51,41,39,0.5); }
+    .card .body { padding: 22px 24px 26px; display: flex; flex-direction: column; flex: 1; }
+    .card .date { font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--mocha-45); }
+    .card h3 { font-family: var(--serif); font-weight: 600; font-size: 1.3rem; line-height: 1.2; margin: 10px 0 12px; }
+    .card .excerpt { font-size: 0.95rem; color: var(--mocha-70); flex: 1; }
+    .card .read { margin-top: 18px; font-weight: 600; font-size: 0.9rem; }
+    .card .read::after { content: " \2192"; transition: margin .25s ease; display: inline-block; }
+    .card:hover .read::after { margin-left: 5px; }
+    .feed-msg { padding: 40px; text-align: center; color: var(--mocha-70); border: 1px dashed var(--thistle); border-radius: var(--radius); }
+    .feed-msg a { color: var(--mocha); font-weight: 600; }
 
     /* SKILLS — block blast */
     .skill-readout { font-family: var(--serif); font-style: italic; font-size: 0.95rem; color: var(--mocha-70); margin-bottom: 18px; }
@@ -256,22 +257,15 @@
   <script>
     /* ============================================================
        EDIT YOUR CONTENT HERE — the only part you change.
-
-       ADDING AN IMAGE (works for avatar, every Finance Thread
-       chapter, every Off-the-clock item, and every Writing post):
-         • Upload the file into your repo (e.g. /img/trek.jpg) and
-           write image: "img/trek.jpg", OR
-         • Paste a direct image link, image: "https://.../photo.jpg"
-         • Leave it "" to keep the old look (emoji / placeholder).
        ============================================================ */
     const CONFIG = {
       name: "Kaitlyn",
-      avatar: "",
+      avatar: "z7910150096044_c9e4ac1cf48b13223ded57077bd860ef.jpg",
       title: "Finance Product Owner",
       tagline: "I build cross-border invoicing & payment systems across 60+ countries.",
       subline: "",
       about: "Product Owner with a strong Business Analysis foundation, leading finance technology products across 60+ countries in EU, LATAM, and Asia. Experienced in e-invoicing compliance, payment workflows, ERP integrations, and Agile product delivery, bridging business and technology to deliver scalable, high-impact solutions.",
-      writingIntro: "Field notes on finance product, the BA/PO craft, and building with AI.",
+      writingIntro: "Field notes on finance product, the BA/PO craft, and building with AI — pulled live from my Substack.",
       metrics: [
         { label: "Countries", value: 60, suffix: "+" },
         { label: "Years in finance products", value: 4, suffix: "+" },
@@ -283,42 +277,19 @@
       // The Finance Thread — your story, in chapters.
       // Optional image per chapter: add image: "img/file.jpg" or a link.
       thread: [
-        { era: "2019", title: "The Curious Investor", body: "It started in a university securities club — financial statements, revenue trends, why some companies thrive and others don't. Funny enough, I could never make a balance sheet balance. I loved understanding businesses; I just wasn't meant to be the accountant.", image: "" },
-        { era: "2019–2021", title: "The Fintech Explorer", body: "As Vietnam's fintech wave hit, one question hooked me: how do people actually experience financial products? Competitions with TNEX, FWD, Zalo and MoMo — some won, some flopped — but each one pulled me toward product thinking.", image: "" },
-        { era: "2021", title: "Entering the Software World", body: "I joined a software outsourcing company supporting delivery and project managers. Agile, Scrum, sprints, stakeholders, requirements — I got so into Agile I made it my graduation thesis.", image: "" },
-        { era: "2022", title: "Discovering Business Analysis", body: "Then something clicked. BA was the intersection of everything: understanding businesses, solving problems, working with users, turning ideas into products. I knew this was the path.", image: "" },
-        { era: "2022–2025", title: "Building the Craft", body: "Three years deep in finance and enterprise systems. The proudest moments weren't the releases — they were proving I belonged in the room, like flying to Singapore to work with UX teams and stakeholders. Quietly, software brought me back to finance: balance sheets stopped being exam questions and AR/AP stopped being textbook chapters. I traced how invoices become accounting entries and how money moves between entities, banks and countries.", image: "" },
-        { era: "2025–Present", title: "Back to Finance, Through a Different Door", body: "The thread looped back to finance — not through investment analysis or textbooks, but as a BA and PO building invoicing, payment and financial-ops products across countries. P2P, O2C, AP/AR, e-invoicing, payments, reporting. I ended up studying finance again — from the inside out. Now I build the systems that create the numbers, not just analyze them.", image: "" },
-        { era: "Now \u00B7 HCMC", title: "A New Chapter", body: "A new city, a broader scope in operational improvement and digital transformation. The goal stays the same: bridge business, technology and finance into products that make complex processes simpler. The path was never linear — but every detour was tied by one thread: a curiosity about how money moves. \u2728", image: "" }
-      ],
-
-      // Writing — keep ~2 posts. Each has a See more / See less toggle.
-      // Optional image per post (same mechanism as above).
-      writing: [
-        {
-          date: "Latest",
-          title: "The balance sheet I could never balance",
-          excerpt: "In university I loved reading companies, but I could never make the two sides meet. Turns out that frustration was the whole point.",
-          body: "I spent a semester convinced I'd be terrible at anything finance. Debits, credits, a stubborn gap that refused to close. What I missed back then is that I wasn't bad at finance — I was bad at being the person who records it. I was the person who wanted to understand why the numbers moved. Years later I'd be designing the systems that produce those numbers in the first place. The gap never closed in that exam. It closed in a product backlog.",
-          image: "",
-          link: "https://kaitlynway.substack.com"
-        },
-        {
-          date: "Latest",
-          title: "What 60 countries of e-invoicing taught me about products",
-          excerpt: "Every country thinks its tax rules are uniquely complicated. They're mostly right — and that's exactly why the boring parts matter most.",
-          body: "France wants e-reporting flows. Italy wants SDI to accept your decimals. China wants a stringified JSON array and a callback it trusts. The temptation is to treat each as a one-off. The better instinct is to ask what's actually shared: an invoice becomes an obligation, an obligation becomes a submission, a submission needs a receipt. Build for that spine, and the country-specific edges become configuration, not chaos. Good finance products are mostly the unglamorous discipline of naming what's the same.",
-          image: "",
-          link: "https://kaitlynway.substack.com"
-        }
+        { era: "2019-2020", title: "Member of Securities Investment Club (FTU)", body: "The main activities are to read financial statements, revenue trends, why some companies thrive and others don't. Ironically, I hate Principles of Accounting classes the most back then, wasnt good at balancing the balance sheet either. I loved understanding businesses but want't meant to be the accountant.", image: "Screenshot 2026-06-07 145950.jpg" },
+        { era: "2010–2021", title: "The Fintech Explorer", body: "As Vietnam's fintech wave hit, one question hooked me: how do people actually experience financial products? Competitions with TNEX, FWD, Zalo and MoMo — some won, some flopped — but each one pulled me toward product thinking.", image: "" },
+        { era: "2022", title: "Entering the Software World", body: "I joined a software outsourcing company supporting delivery and project managers. Agile, Scrum, sprints, stakeholders, requirements — I got so into Agile I made it my graduation thesis.", image: "" },
+        { era: "2023-2025", title: "Discovering Business Analysis", body: "Magically, BA was the intersection of everything: understanding businesses, solving problems, working with users, turning ideas into products. Three years deep in finance and enterprise systems. The proudest moments weren't the releases — they were proving I belonged in the room, like flying to Singapore to work with UX teams and stakeholders. Quietly, software brought me back to finance: balance sheets stopped being exam questions and AR/AP stopped being textbook chapters. I traced how invoices become accounting entries and how money moves between entities, banks and countries.", image: "" },
+        { era: "2025–Present", title: "Upgrade to be a Finance Product Owner", body: "The thread looped back to finance, not through investment analysis or textbooks, but as a BA and PO building invoicing, payment and financial-ops products across countries. P2P, O2C, AP/AR, e-invoicing, payments, reporting. I ended up studying finance again, from the inside out. Now I build the systems that create the numbers, not just analyze them.", image: "" },
       ],
 
       // Off-the-clock — optional image per item (else the emoji shows).
       personal: [
-        { emo: "\uD83E\uDD7E", label: "Trekking", image: "" },
-        { emo: "\uD83C\uDFDD\uFE0F", label: "Island hopping", image: "" },
-        { emo: "\uD83D\uDCDA", label: "Always reading", image: "" },
-        { emo: "\uD83C\uDF0F", label: "Local exploring", image: "" }
+        { emo: "\uD83E\uDD7E", label: "", image: "z7910129051003_2b649bea3c70183234aff56edcb6668d.jpg" },
+        { emo: "\uD83C\uDFDD\uFE0F", label: "", image: "z7910129060836_307dd71371bf312e938bf6f639baf9a4.jpg" },
+        { emo: "\uD83D\uDCDA", label: "", image: "" },
+        { emo: "\uD83C\uDF0F", label: "", image: "" }
       ],
 
       // Countries to fill dark (your finance footprint). ISO-2 codes.
@@ -335,6 +306,7 @@
     const isNum = (v) => typeof v === "number" && isFinite(v);
     const el = (id) => document.getElementById(id);
     const esc = (s) => String(s == null ? "" : s);
+    function fmtDate(str) { if (!str) return ""; const d = new Date(str); return isNaN(d) ? "" : d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }); }
 
     /* ---- static content ---- */
     el("hero-eyebrow").textContent = CONFIG.title;
@@ -422,34 +394,28 @@
       '<div class="delight reveal"><span class="delight-spark" aria-hidden="true">\u2728</span>' +
       '<p>The student who struggled to balance a balance sheet was now helping design the processes that generated the numbers behind it.</p></div>';
 
-    /* ---- Writing posts (config-driven, See more / See less) ---- */
-    CONFIG.writing.forEach(p => {
-      const art = document.createElement("article");
-      art.className = "post reveal";
-      const img = isReal(p.image) ? '<div class="post-img"><img src="' + esc(p.image) + '" alt="" loading="lazy" /></div>' : '';
-      const link = isReal(p.link) ? '<a class="post-link" href="' + esc(p.link) + '" target="_blank" rel="noopener">Read the full thing on Substack \u2192</a>' : '';
-      const bodyHtml = isReal(p.body) ? '<p>' + esc(p.body) + '</p>' : '';
-      const hasMore = (bodyHtml || link);
-      const more = hasMore
-        ? '<div class="more" hidden>' + bodyHtml + link + '</div><button class="see-toggle" type="button">See more</button>'
-        : '';
-      art.innerHTML = img +
-        '<div class="post-body">' +
-          '<span class="date">' + esc(p.date) + '</span>' +
-          '<h3>' + esc(p.title) + '</h3>' +
-          '<p class="excerpt">' + esc(p.excerpt) + '</p>' +
-          more +
-        '</div>';
-      el("cards").appendChild(art);
-    });
-    el("cards").addEventListener("click", (e) => {
-      const btn = e.target.closest(".see-toggle");
-      if (!btn) return;
-      const more = btn.previousElementSibling;
-      if (!more) return;
-      if (more.hasAttribute("hidden")) { more.removeAttribute("hidden"); btn.textContent = "See less"; }
-      else { more.setAttribute("hidden", ""); btn.textContent = "See more"; }
-    });
+    /* ---- writing from Substack ---- */
+    const C = CONFIG.contact;
+    (async function loadPosts() {
+      const box = el("cards");
+      try {
+        const res = await fetch("/api/posts");
+        const data = await res.json();
+        const posts = (data && data.posts) || [];
+        if (data.error || posts.length === 0) {
+          box.outerHTML = '<div class="feed-msg">Posts are taking a break. Read everything on <a href="' + C.substack + '" target="_blank" rel="noopener">Substack &rarr;</a></div>';
+          return;
+        }
+        box.innerHTML = posts.map(p => (
+          '<a class="card" href="' + p.link + '" target="_blank" rel="noopener">' +
+            (p.coverImage ? '<div class="thumb"><img src="' + p.coverImage + '" alt="" loading="lazy" /></div>' : '<div class="thumb placeholder"><span>' + ((p.title || "K")[0]) + '</span></div>') +
+            '<div class="body"><span class="date">' + fmtDate(p.pubDate) + '</span><h3>' + p.title + '</h3><p class="excerpt">' + (p.excerpt || "") + '</p><span class="read">Read on Substack</span></div>' +
+          '</a>'
+        )).join("");
+      } catch (e) {
+        box.outerHTML = '<div class="feed-msg">Couldn\u0027t load posts right now. Read everything on <a href="' + C.substack + '" target="_blank" rel="noopener">Substack &rarr;</a></div>';
+      }
+    })();
 
     /* ---- Off the clock (+ optional image) ---- */
     CONFIG.personal.forEach(p => {
@@ -463,7 +429,6 @@
     });
 
     /* ---- contact ---- */
-    const C = CONFIG.contact;
     const btns = [];
     if (isReal(C.linkedin)) btns.push('<a class="btn" href="' + C.linkedin + '" target="_blank" rel="noopener">LinkedIn</a>');
     if (isReal(C.substack)) btns.push('<a class="btn" href="' + C.substack + '" target="_blank" rel="noopener">Substack</a>');
