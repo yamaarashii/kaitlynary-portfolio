@@ -3,20 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kaitlyn — Money Movement Product Owner</title>
+  <title>Kaitlynary — Money Movement Product Owner</title>
   <meta name="description" content="Finance PO building cross-border invoicing & payment systems across 60+ countries." />
-  <meta property="og:title" content="Kaitlyn — Money Movement Product Owner" />
+  <meta property="og:title" content="Kaitlynary — Money Movement Product Owner" />
   <meta property="og:description" content="Finance PO building cross-border invoicing & payment systems across 60+ countries." />
   <meta property="og:type" content="website" />
-  <!-- <meta property="og:image" content="https://your-cover-image.png" /> -->
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Interactive world map (loads in the browser) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/css/jsvectormap.min.css" />
 
   <style>
     :root {
       --thistle: #D6C8DF;
+      --thistle-light: #EAE3EF;
       --mocha: #332927;
       --cream: #FAF7F5;
       --mocha-70: rgba(51, 41, 39, 0.70);
@@ -27,14 +29,7 @@
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
-    body {
-      font-family: var(--sans);
-      color: var(--mocha);
-      background: var(--cream);
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
-    }
+    body { font-family: var(--sans); color: var(--mocha); background: var(--cream); line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
     .wrap { max-width: 920px; margin: 0 auto; padding: 0 28px; }
 
     .reveal { opacity: 0; transform: translateY(20px); transition: opacity .7s ease, transform .7s ease; }
@@ -43,16 +38,16 @@
     /* HERO */
     header.hero { padding: 110px 0 60px; }
     .eyebrow { font-size: 0.82rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--mocha-70); font-weight: 600; margin-bottom: 22px; }
-    .hero h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(2.6rem, 7vw, 4.6rem); line-height: 1.04; letter-spacing: -0.02em; }
-    .hero h1 .name { font-style: italic; }
-    .hero .tagline { font-family: var(--serif); font-style: italic; font-size: clamp(1.2rem, 3vw, 1.7rem); color: var(--mocha-70); margin-top: 22px; max-width: 620px; }
+    .hero h1 { font-family: var(--serif); font-weight: 700; font-size: clamp(2.6rem, 7vw, 4.6rem); line-height: 1.04; letter-spacing: -0.02em; color: var(--mocha); }
+    .hero h1 .name { font-style: italic; color: var(--mocha); }
+    .hero .tagline { font-family: var(--serif); font-style: italic; font-size: clamp(1.2rem, 3vw, 1.7rem); color: var(--mocha); margin-top: 22px; max-width: 620px; }
     .hero .subline { margin-top: 14px; color: var(--mocha-45); font-size: 0.98rem; letter-spacing: 0.02em; }
 
-    /* METRICS — solid thistle blocks */
+    /* METRICS */
     .metrics { display: flex; flex-wrap: wrap; gap: 16px; padding: 18px 0 70px; }
     .metric { background: var(--thistle); border-radius: var(--radius); padding: 22px 26px; min-width: 150px; flex: 1; }
     .metric .num { font-family: var(--serif); font-size: 2.4rem; font-weight: 600; line-height: 1; }
-    .metric .lbl { font-size: 0.82rem; color: var(--mocha-70); margin-top: 8px; letter-spacing: 0.02em; }
+    .metric .lbl { font-size: 0.82rem; color: var(--mocha-70); margin-top: 8px; }
 
     section { padding: 56px 0; }
     .sec-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 34px; }
@@ -62,11 +57,30 @@
     .about p { font-size: clamp(1.05rem, 2.2vw, 1.25rem); max-width: 700px; color: var(--mocha); }
     .about .intro { color: var(--mocha-70); font-style: italic; font-family: var(--serif); }
 
-    /* SOLID thistle band for the skills section */
     .band { background: var(--thistle); }
     .band .sec-head .rule { background: rgba(51,41,39,0.25); }
 
-    /* WRITING — solid white cards */
+    /* MAP */
+    #worldmap { width: 100%; height: 440px; }
+    .map-note { color: var(--mocha-70); font-size: 0.92rem; margin-top: 14px; }
+    .jvm-tooltip { background: var(--mocha) !important; border-radius: 8px !important; font-family: var(--sans) !important; }
+
+    /* JOURNEY + XP */
+    .xp { margin-bottom: 30px; }
+    .xp .xp-top { display: flex; justify-content: space-between; font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--mocha-70); margin-bottom: 8px; }
+    .xp .xp-track { height: 10px; background: var(--thistle); border-radius: 999px; overflow: hidden; }
+    .xp .xp-fill { height: 100%; width: 0; background: var(--mocha); border-radius: 999px; transition: width .8s ease; }
+    .levels { position: relative; padding-left: 30px; }
+    .levels::before { content: ""; position: absolute; left: 9px; top: 6px; bottom: 6px; width: 2px; background: var(--thistle); }
+    .level { position: relative; padding: 0 0 34px; }
+    .level::before { content: ""; position: absolute; left: -26px; top: 4px; width: 14px; height: 14px; border-radius: 50%; background: var(--cream); border: 3px solid var(--thistle); transition: border-color .4s ease, background .4s ease; }
+    .level.in::before { border-color: var(--mocha); background: var(--mocha); }
+    .level .lvl { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mocha-45); }
+    .level h3 { font-family: var(--serif); font-weight: 600; font-size: 1.4rem; margin: 4px 0 2px; }
+    .level .period { font-size: 0.82rem; color: var(--mocha-45); margin-bottom: 8px; }
+    .level p { color: var(--mocha-70); max-width: 640px; }
+
+    /* WRITING */
     .cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
     .card { display: flex; flex-direction: column; background: #FFFFFF; border: 1px solid var(--thistle); border-radius: var(--radius); overflow: hidden; text-decoration: none; color: inherit; transition: transform .35s ease, box-shadow .35s ease, border-color .35s ease; }
     .card:hover { transform: translateY(-6px); box-shadow: 0 18px 40px -22px rgba(51,41,39,0.45); border-color: var(--mocha); }
@@ -81,30 +95,50 @@
     .card .read { margin-top: 18px; font-weight: 600; font-size: 0.9rem; }
     .card .read::after { content: " \2192"; transition: margin .25s ease; display: inline-block; }
     .card:hover .read::after { margin-left: 5px; }
-
     .feed-msg { padding: 40px; text-align: center; color: var(--mocha-70); border: 1px dashed var(--thistle); border-radius: var(--radius); }
     .feed-msg a { color: var(--mocha); font-weight: 600; }
 
     /* CHIPS */
-    .glabel { font-size: 0.82rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--mocha-70); font-weight: 600; margin-bottom: 14px; }
     .chips { display: flex; flex-wrap: wrap; gap: 10px; }
     .chip { padding: 9px 16px; border-radius: 999px; font-size: 0.9rem; font-weight: 500; background: #FFFFFF; color: var(--mocha); border: 1px solid var(--mocha); }
 
-    footer { background: var(--mocha); color: var(--cream); border-radius: 32px 32px 0 0; margin-top: 0; padding: 70px 0 50px; }
+    /* PERSONAL */
+    .personal { display: flex; flex-wrap: wrap; gap: 14px; }
+    .pcard { flex: 1; min-width: 150px; background: #FFFFFF; border: 1px solid var(--thistle); border-radius: var(--radius); padding: 24px; text-align: center; }
+    .pcard .emo { font-size: 2rem; }
+    .pcard .lab { margin-top: 10px; font-weight: 500; }
+
+    /* FOOTER */
+    footer { background: var(--mocha); color: var(--cream); border-radius: 32px 32px 0 0; padding: 70px 0 50px; }
     footer h2 { font-family: var(--serif); font-weight: 600; font-size: clamp(1.8rem, 5vw, 2.8rem); letter-spacing: -0.01em; }
     footer .links { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 30px; }
     footer a.btn { text-decoration: none; color: var(--cream); border: 1px solid rgba(250,247,245,0.4); padding: 12px 22px; border-radius: 999px; font-weight: 500; transition: background .25s ease, color .25s ease; }
     footer a.btn:hover { background: var(--thistle); color: var(--mocha); border-color: var(--thistle); }
     footer .copy { margin-top: 48px; font-size: 0.82rem; color: rgba(250,247,245,0.5); }
 
+    /* AURA badge */
+    #aura { position: fixed; right: 18px; bottom: 18px; z-index: 50; background: var(--thistle); color: var(--mocha); border-radius: 999px; padding: 10px 18px; font-weight: 600; font-size: 0.9rem; box-shadow: 0 8px 24px -10px rgba(51,41,39,0.5); cursor: default; user-select: none; transition: transform .2s ease; }
+    #aura.pop { transform: scale(1.15); }
+
+    /* Konami floaters + toast */
+    .floater { position: fixed; bottom: -40px; font-size: 1.8rem; z-index: 60; pointer-events: none; animation: floatUp linear forwards; }
+    @keyframes floatUp { to { transform: translateY(-110vh) rotate(40deg); opacity: 0; } }
+    #toast { position: fixed; left: 50%; top: 28px; transform: translateX(-50%) translateY(-80px); background: var(--mocha); color: var(--cream); padding: 14px 24px; border-radius: 999px; z-index: 70; opacity: 0; transition: transform .4s ease, opacity .4s ease; font-weight: 500; }
+    #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
     @media (max-width: 640px) {
       .cards { grid-template-columns: 1fr; }
       header.hero { padding: 80px 0 40px; }
-      .metric { min-width: 100%; }
+      .metric, .pcard { min-width: 100%; }
+      #worldmap { height: 320px; }
     }
+    @media (prefers-reduced-motion: reduce) { .floater { display: none; } }
   </style>
 </head>
 <body>
+  <div id="aura" title="Explore to earn aura">\u2728 aura: <span id="aura-n">0</span></div>
+  <div id="toast"></div>
+
   <div class="wrap">
     <header class="hero reveal">
       <p class="eyebrow" id="hero-eyebrow"></p>
@@ -118,6 +152,21 @@
     <section class="about reveal">
       <div class="sec-head"><h2>About</h2><span class="rule"></span></div>
       <p id="about-text"></p>
+    </section>
+
+    <section class="reveal">
+      <div class="sec-head"><h2>Where I've worked</h2><span class="rule"></span></div>
+      <div id="worldmap"></div>
+      <p class="map-note">Finance products shipped across 60+ countries in EU, LATAM, and Asia.</p>
+    </section>
+
+    <section>
+      <div class="sec-head reveal"><h2>The journey</h2><span class="rule"></span></div>
+      <div class="xp reveal">
+        <div class="xp-top"><span>BA</span><span id="xp-label">Level up</span><span>PO</span></div>
+        <div class="xp-track"><div class="xp-fill" id="xp-fill"></div></div>
+      </div>
+      <div class="levels" id="levels"></div>
     </section>
 
     <section class="reveal">
@@ -136,6 +185,13 @@
     </div>
   </div>
 
+  <div class="wrap">
+    <section class="reveal">
+      <div class="sec-head"><h2>Off the clock</h2><span class="rule"></span></div>
+      <div class="personal" id="personal"></div>
+    </section>
+  </div>
+
   <footer class="reveal">
     <div class="wrap">
       <h2>Let's talk.</h2>
@@ -144,27 +200,41 @@
     </div>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/js/jsvectormap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/maps/world.js"></script>
   <script>
     /* ============================================================
        EDIT YOUR CONTENT HERE — the only part you change.
-       (Posts come automatically from Substack, not here.)
-       Leave a value "" or starting with "[" to hide it.
        ============================================================ */
     const CONFIG = {
       name: "Kaitlyn",
       title: "Finance Product Owner",
-      tagline: "Building invoicing, payments and compliance platforms across 60+ countries.",
-      subline: "From the intersection of finance, product and technology.",
-      about: "Finance Product Owner with a Business Analysis foundation, leading products across Europe, LATAM and Asia. Experienced in e-invoicing compliance, payment workflows, ERP integrations and finance automation, translating complex business requirements into scalable digital solutions.",
-      writingIntro: "Skicky notes on finance domain, business analysis, product ownership, project delivery and building with AI..",
+      tagline: "I build cross-border invoicing & payment systems across 60+ countries.",
+      subline: "",
+      about: "Product Owner with a strong Business Analysis foundation, leading finance technology products across 60+ countries in EU, LATAM, and Asia. Experienced in e-invoicing compliance, payment workflows, ERP integrations, and Agile product delivery, bridging business and technology to deliver scalable, high-impact solutions.",
+      writingIntro: "Field notes on finance product, the BA/PO craft, and building with AI — pulled live from my Substack.",
       metrics: [
         { label: "Countries", value: 60, suffix: "+" },
-        { label: "Workflows transformed", value: 50, suffix: "+" },
         { label: "Years in finance products", value: 4, suffix: "+" },
-        { label: "Apps owned", value: 3, suffix: "+" },
-        { label: "E-invoicing projects", value: 6, suffix: "+" },
+        { label: "E-invoicing projects", value: 6, suffix: "" },
+        { label: "Workflows transformed", value: 50, suffix: "+" }
       ],
       skills: ["E-Invoicing Compliance", "Payment Flows", "ERP Integration", "Product Ownership", "Business Analysis", "Process Automation", "GovTech"],
+      // Journey — edit titles / periods / text freely
+      journey: [
+        { lvl: "Lv.1", title: "Business Analyst", period: "Outsourcing era", desc: "Delivered finance digital-transformation products for APAC government and enterprise clients." },
+        { lvl: "Lv.2", title: "Senior Business Analyst", period: "Scaling up", desc: "Owned finance product requirements end-to-end, with exposure to EU markets." },
+        { lvl: "Lv.3", title: "Finance Product Owner", period: "Now", desc: "Run a financial execution ecosystem across 60+ countries — e-invoicing, payments, ERP integration." }
+      ],
+      // Off-the-clock — edit freely
+      personal: [
+        { emo: "\uD83E\uDD7E", label: "Trekking" },
+        { emo: "\uD83C\uDFDD\uFE0F", label: "Island hopping" },
+        { emo: "\uD83D\uDCDA", label: "Always reading" },
+        { emo: "\uD83C\uDF0F", label: "Local exploring" }
+      ],
+      // World map — ISO-2 country codes to highlight. Edit to match your real footprint.
+      mapCountries: ["FR","DE","ES","IT","NL","BE","PL","PT","SE","IE","AT","FI","DK","CZ","RO","GB","BR","MX","AR","CL","CO","PE","UY","VN","SG","TH","MY","PH","ID","JP","IN","CN","HK","KR","TW"],
       contact: {
         linkedin: "https://www.linkedin.com/in/phuonglt13/",
         substack: "https://kaitlynway.substack.com",
@@ -176,14 +246,9 @@
     const isReal = (v) => typeof v === "string" && v.trim() !== "" && !v.trim().startsWith("[");
     const isNum = (v) => typeof v === "number" && isFinite(v);
     const el = (id) => document.getElementById(id);
+    function fmtDate(str) { if (!str) return ""; const d = new Date(str); return isNaN(d) ? "" : d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }); }
 
-    function fmtDate(str) {
-      if (!str) return "";
-      const d = new Date(str);
-      if (isNaN(d)) return "";
-      return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
-    }
-
+    /* ---- static content ---- */
     el("hero-eyebrow").textContent = CONFIG.title;
     el("hero-name").textContent = CONFIG.name;
     el("hero-tagline").textContent = CONFIG.tagline;
@@ -200,6 +265,20 @@
 
     CONFIG.skills.forEach(s => { const c = document.createElement("span"); c.className = "chip"; c.textContent = s; el("skills").appendChild(c); });
 
+    CONFIG.journey.forEach(j => {
+      const d = document.createElement("div");
+      d.className = "level reveal";
+      d.innerHTML = '<div class="lvl">' + j.lvl + '</div><h3>' + j.title + '</h3><div class="period">' + j.period + '</div><p>' + j.desc + '</p>';
+      el("levels").appendChild(d);
+    });
+
+    CONFIG.personal.forEach(p => {
+      const d = document.createElement("div");
+      d.className = "pcard";
+      d.innerHTML = '<div class="emo">' + p.emo + '</div><div class="lab">' + p.label + '</div>';
+      el("personal").appendChild(d);
+    });
+
     const C = CONFIG.contact;
     const btns = [];
     if (isReal(C.linkedin)) btns.push('<a class="btn" href="' + C.linkedin + '" target="_blank" rel="noopener">LinkedIn</a>');
@@ -209,7 +288,8 @@
     el("contact").innerHTML = btns.join("");
     el("copy").textContent = "\u00A9 " + new Date().getFullYear() + " " + CONFIG.name;
 
-    async function loadPosts() {
+    /* ---- writing from Substack ---- */
+    (async function loadPosts() {
       const box = el("cards");
       try {
         const res = await fetch("/api/posts");
@@ -221,28 +301,60 @@
         }
         box.innerHTML = posts.map(p => (
           '<a class="card" href="' + p.link + '" target="_blank" rel="noopener">' +
-            (p.coverImage
-              ? '<div class="thumb"><img src="' + p.coverImage + '" alt="" loading="lazy" /></div>'
-              : '<div class="thumb placeholder"><span>' + ((p.title || "K")[0]) + '</span></div>') +
-            '<div class="body">' +
-              '<span class="date">' + fmtDate(p.pubDate) + '</span>' +
-              '<h3>' + p.title + '</h3>' +
-              '<span class="read">Read on Substack</span>' +
-            '</div>' +
+            (p.coverImage ? '<div class="thumb"><img src="' + p.coverImage + '" alt="" loading="lazy" /></div>' : '<div class="thumb placeholder"><span>' + ((p.title || "K")[0]) + '</span></div>') +
+            '<div class="body"><span class="date">' + fmtDate(p.pubDate) + '</span><h3>' + p.title + '</h3><p class="excerpt">' + (p.excerpt || "") + '</p><span class="read">Read on Substack</span></div>' +
           '</a>'
         )).join("");
       } catch (e) {
         box.outerHTML = '<div class="feed-msg">Couldn\u0027t load posts right now. Read everything on <a href="' + C.substack + '" target="_blank" rel="noopener">Substack &rarr;</a></div>';
       }
-    }
-    loadPosts();
+    })();
 
+    /* ---- world map ---- */
+    (function initMap() {
+      try {
+        const values = {};
+        CONFIG.mapCountries.forEach(c => { values[c] = 1; });
+        new jsVectorMap({
+          selector: "#worldmap",
+          map: "world",
+          zoomButtons: false,
+          zoomOnScroll: false,
+          regionsSelectable: false,
+          backgroundColor: "transparent",
+          regionStyle: { initial: { fill: "#EAE3EF", stroke: "#FAF7F5", strokeWidth: 0.4 } },
+          series: { regions: [{ attribute: "fill", values: values, scale: ["#332927"], normalizeFunction: "polynomial" }] }
+        });
+      } catch (e) { el("worldmap").innerHTML = '<p class="map-note">Map unavailable.</p>'; }
+    })();
+
+    /* ---- aura points ---- */
+    let aura = 0;
+    const auraN = el("aura-n");
+    function addAura(n) {
+      aura += n;
+      auraN.textContent = aura;
+      const b = el("aura"); b.classList.add("pop"); setTimeout(() => b.classList.remove("pop"), 200);
+    }
+
+    /* ---- journey XP ---- */
+    let levelsSeen = 0;
+    const totalLevels = CONFIG.journey.length;
+    function bumpXP() {
+      levelsSeen++;
+      el("xp-fill").style.width = Math.round((levelsSeen / totalLevels) * 100) + "%";
+      if (levelsSeen >= totalLevels) el("xp-label").textContent = "Max level \u2728";
+    }
+
+    /* ---- reveal + count-up ---- */
     const io = new IntersectionObserver((entries) => {
       entries.forEach(en => {
         if (!en.isIntersecting) return;
         en.target.classList.add("in");
         const nums = en.target.querySelectorAll ? en.target.querySelectorAll(".num[data-target]") : [];
         nums.forEach(countUp);
+        if (en.target.classList.contains("level")) bumpXP();
+        addAura(10);
         io.unobserve(en.target);
       });
     }, { threshold: 0.15 });
@@ -252,13 +364,40 @@
       const target = parseFloat(node.dataset.target);
       const suffix = node.textContent.replace(/[0-9.]/g, "");
       const dur = 1100; const start = performance.now();
-      function tick(now) {
-        const t = Math.min((now - start) / dur, 1);
+      (function tick(now) {
+        const t = Math.min(((now || performance.now()) - start) / dur, 1);
         const eased = 1 - Math.pow(1 - t, 3);
         node.textContent = Math.round(target * eased) + suffix;
         if (t < 1) requestAnimationFrame(tick);
+      })(start);
+    }
+
+    /* ---- Konami easter egg ---- */
+    const seq = ["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"];
+    let pos = 0;
+    document.addEventListener("keydown", (e) => {
+      const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+      pos = (k === seq[pos]) ? pos + 1 : (k === seq[0] ? 1 : 0);
+      if (pos === seq.length) { pos = 0; partyTime(); }
+    });
+    function partyTime() {
+      addAura(100);
+      showToast("You found the secret. +100 aura \u2728");
+      const emojis = ["\u2728","\uD83D\uDC95","\uD83C\uDF1F","\uD83D\uDCAB","\uD83E\uDED0"];
+      for (let i = 0; i < 40; i++) {
+        const f = document.createElement("span");
+        f.className = "floater";
+        f.textContent = emojis[i % emojis.length];
+        f.style.left = Math.random() * 100 + "vw";
+        f.style.animationDuration = (2.5 + Math.random() * 2.5) + "s";
+        f.style.animationDelay = (Math.random() * 0.6) + "s";
+        document.body.appendChild(f);
+        setTimeout(() => f.remove(), 6000);
       }
-      requestAnimationFrame(tick);
+    }
+    function showToast(msg) {
+      const t = el("toast"); t.textContent = msg; t.classList.add("show");
+      setTimeout(() => t.classList.remove("show"), 2600);
     }
   </script>
 </body>
