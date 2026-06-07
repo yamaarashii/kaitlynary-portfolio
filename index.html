@@ -206,7 +206,7 @@
     <section class="reveal">
       <div class="sec-head"><h2>Where I've worked</h2><span class="rule"></span></div>
       <div id="worldmap"></div>
-      <p class="map-note">Dark = my finance footprint across EU, LATAM, US, Canada &amp; Asia.</p>
+      <p class="map-note">My finance footprint across EU, LATAM, US and Asia.</p>
     </section>
 
     <section id="story">
@@ -276,13 +276,42 @@
 
       // The Finance Thread — your story, in chapters.
       // Optional image per chapter: add image: "img/file.jpg" or a link.
-      thread: [
-        { era: "2019-2020", title: "Member of Securities Investment Club (FTU)", body: "The main activities are to read financial statements, revenue trends, why some companies thrive and others don't. Ironically, I hate Principles of Accounting classes the most back then, wasnt good at balancing the balance sheet either. I loved understanding businesses but want't meant to be the accountant.", image: "Screenshot 2026-06-07 145950.jpg" },
-        { era: "2010–2021", title: "The Fintech Explorer", body: "As Vietnam's fintech wave hit, one question hooked me: how do people actually experience financial products? Competitions with TNEX, FWD, Zalo and MoMo — some won, some flopped — but each one pulled me toward product thinking.", image: "" },
-        { era: "2022", title: "Entering the Software World", body: "I joined a software outsourcing company supporting delivery and project managers. Agile, Scrum, sprints, stakeholders, requirements — I got so into Agile I made it my graduation thesis.", image: "" },
-        { era: "2023-2025", title: "Discovering Business Analysis", body: "Magically, BA was the intersection of everything: understanding businesses, solving problems, working with users, turning ideas into products. Three years deep in finance and enterprise systems. The proudest moments weren't the releases — they were proving I belonged in the room, like flying to Singapore to work with UX teams and stakeholders. Quietly, software brought me back to finance: balance sheets stopped being exam questions and AR/AP stopped being textbook chapters. I traced how invoices become accounting entries and how money moves between entities, banks and countries.", image: "" },
-        { era: "2025–Present", title: "Upgrade to be a Finance Product Owner", body: "The thread looped back to finance, not through investment analysis or textbooks, but as a BA and PO building invoicing, payment and financial-ops products across countries. P2P, O2C, AP/AR, e-invoicing, payments, reporting. I ended up studying finance again, from the inside out. Now I build the systems that create the numbers, not just analyze them.", image: "" },
-      ],
+thread: [
+{
+era: "2019–2020",
+title: "Member of Securities Investment Club (FTU)",
+body: "My finance journey started in a university securities club, analyzing financial statements, revenue trends, industry reports, and why some companies thrive while others don't. I was never great at balancing balance sheets, but I loved understanding how businesses worked.",
+image: "Screenshot 2026-06-07 145950.jpg"
+},
+
+{
+era: "2020–2022",
+title: "The Fintech Explorer",
+body: "As Vietnam's fintech wave accelerated, many student fintech competitions sponsored by TNEX, FWD, Zalo, and MoMo were held. I joined, some won, others failed spectacularly, but every experience pushed me closer to the product world, exposed me to UX, customer journeys, and product thinking.",
+image: ""
+},
+
+{
+era: "2022–2023",
+title: "Entering the Software World",
+body: "I joined a software outsourcing company supporting Delivery Managers and Project Managers. Agile, Scrum, stakeholder management, sprint planning, and software delivery became my new playground. The more I learned, the more fascinated I became, eventually turning Agile into the topic of my graduation thesis.",
+image: ""
+},
+
+{
+era: "2023–2025",
+title: "Discovering Business Analysis",
+body: "Then something clicked. Business Analysis felt like the intersection of everything I enjoyed: understanding businesses, solving problems, working with users, and turning ideas into products. Over the next three years, I worked on finance and enterprise systems, collaborated with international teams, and even traveled to Singapore to work directly with UX specialists and stakeholders. Along the way, software quietly brought me back to finance. Balance sheets stopped being exam questions, and AP/AR became real operational processes. I started tracing how invoices become accounting entries and how money moves between entities, banks, and countries.",
+image: ""
+},
+
+{
+era: "2025–Present",
+title: "Finance Product Owner",
+body: "The journey eventually looped back to finance, but through a different door. Today, I build invoicing, payment, and financial operations products across multiple countries. Working with P2P, O2C, AP/AR, e-invoicing, payment flows, and financial reporting has given me a new perspective on finance. I ended up studying it again, not from textbooks, but from the systems that power it. Now I help design the processes that create the numbers, not just analyze them.",
+image: ""
+}
+]
 
       // Off-the-clock — optional image per item (else the emoji shows).
       personal: [
@@ -348,7 +377,7 @@
 
     let blasted = 0;
     const blastReadout = el("blast-readout");
-    const blastMsgs = ["nice", "keep going", "blasting", "unstoppable", "okay show-off"];
+    const blastMsgs = ["press me ^^"];
     el("skills").addEventListener("click", (e) => {
       const b = e.target.closest(".sblock");
       if (!b) return;
@@ -390,9 +419,9 @@
     });
 
     /* ---- delightful summary box after "A New Chapter" ---- */
-    el("delight-slot").innerHTML =
+    /*---- el("delight-slot").innerHTML =
       '<div class="delight reveal"><span class="delight-spark" aria-hidden="true">\u2728</span>' +
-      '<p>The student who struggled to balance a balance sheet was now helping design the processes that generated the numbers behind it.</p></div>';
+      '<p>The student who struggled to balance a balance sheet was now helping design the processes that generated the numbers behind it.</p></div>';---- */
 
     /* ---- writing from Substack ---- */
     const C = CONFIG.contact;
