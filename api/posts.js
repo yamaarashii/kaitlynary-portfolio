@@ -71,7 +71,7 @@ function enclosureImage(item) {
 // ---- core parsing (exported so we can unit-test it without the network) ---
 
 // Posts to hide from the portfolio. Add a title here (case-insensitive) to exclude it.
-const EXCLUDE = ["unpublished thoughts","hi 2026","How do I find creativity in the IT Outsourcing environment?","Pour-Over vs. Espresso Shot: Public & Private Finance in ERP","Me wrapping-up some of my sub-versions in 2024"];
+const EXCLUDE = ["unpublished thoughts"];
 
 function isExcluded(post) {
   const hay = `${post.title} ${post.link}`.toLowerCase();
@@ -88,14 +88,16 @@ export function parseFeed(xml) {
 
   return items
     .map((it) => {
-      const content =
-        pickText(it["content:encoded"]) || pickText(it.description) || "";
+      const body = pickText(it["content:encoded"]) || "";
+      const subtitle = pickText(it.description) || "";
+      // Prefer the post's subtitle for the card; fall back to the body only if there's no subtitle.
+      const excerptSource = subtitle.trim() ? subtitle : body;
       return {
         title: decodeEntities(pickText(it.title)),
         link: pickText(it.link),
         pubDate: it.pubDate || null,
-        excerpt: makeExcerpt(content),
-        coverImage: firstImage(content) || enclosureImage(it) || null,
+        excerpt: makeExcerpt(excerptSource),
+        coverImage: firstImage(body) || enclosureImage(it) || null,
       };
     })
     .filter((post) => !isExcluded(post));
