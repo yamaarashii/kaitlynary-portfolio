@@ -155,7 +155,11 @@
     .cart-label img.pixel { width: 34px; height: 34px; }
     .cart-label h3 { font-family: var(--serif); font-size: .92rem; line-height: 1.15; }
     .cart-label .kind { font-family: var(--mono); font-size: .62rem; color: var(--mocha-45); text-transform: uppercase; letter-spacing: .08em; }
-    .cart-detail { margin-top: 26px; background: #fff; border: 1px solid var(--thistle); border-radius: var(--radius); padding: 24px; }
+    .cart-detail { margin-bottom: 22px; background: #fff; border: 1px solid var(--thistle); border-radius: var(--radius); padding: 24px; }
+    @keyframes cartLoad { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+    .cart-detail.loaded { animation: cartLoad .35s ease; }
+    @keyframes cartInsert { 0% { transform: translateY(-10px) rotate(-2deg); } 45% { transform: translateY(4px) rotate(0); } 100% { transform: translateY(0) rotate(0); } }
+    .cartridge.inserting { animation: cartInsert .3s ease; }
     .cart-detail .ck { font-family: var(--mono); font-size: .7rem; color: var(--mocha-45); text-transform: uppercase; letter-spacing: .08em; }
     .cart-detail h3 { font-family: var(--serif); font-weight: 600; font-size: 1.25rem; margin: 4px 0; }
     .cart-detail p { color: var(--mocha-70); margin: 8px 0 16px; max-width: 640px; }
@@ -177,6 +181,14 @@
     .polaroid .cap { font-family: var(--serif); font-style: italic; font-size: .92rem; text-align: center; padding: 12px 4px 16px; color: var(--mocha-70); }
 
     .pixel { image-rendering: pixelated; image-rendering: crisp-edges; }
+
+    /* SNAKE LCD DIVIDER */
+    .snake-strip{ --cell:14px; --lcd-panel:#9bbc0f; --lcd-off:rgba(15,56,15,.14); --lcd-on:#0f380f; --lcd-food:#0f380f; width:100%; background:var(--lcd-panel); border-radius:8px; padding:9px 10px; position:relative; overflow:hidden; display:flex; gap:3px; box-shadow:inset 0 2px 6px rgba(15,56,15,.3), inset 0 -1px 0 rgba(255,255,255,.2); }
+    .snake-strip::after{ content:""; position:absolute; inset:0; pointer-events:none; background:repeating-linear-gradient(to bottom,rgba(15,56,15,.06) 0 1px,transparent 1px 3px); }
+    .snake-strip .px{ width:var(--cell); height:var(--cell); border-radius:2px; flex:0 0 auto; background:var(--lcd-off); transition:background .04s linear; }
+    .snake-strip .px.on,.snake-strip .px.head{ background:var(--lcd-on); }
+    .snake-strip .px.head{ box-shadow:0 0 0 1px rgba(255,255,255,.25) inset; }
+    .snake-strip .px.food{ background:var(--lcd-food); border-radius:50%; }
     #cute .msg { font-family: var(--mono); color: #7a3b54; font-size: clamp(1rem,3vw,1.5rem); text-align: center; padding: 24px; }
 
     footer { padding: 50px 0; text-align: center; font-family: var(--mono); font-size: .8rem; color: var(--mocha-45); }
@@ -208,6 +220,8 @@
       <button class="cmd" data-go="contact"><span class="c">$ ./connect.sh</span><span class="d">developer console — let's talk</span></button>
     </div>
 
+    <div class="snake-strip" data-snake data-speed="90"></div>
+
     <!-- STORY: STATE MACHINE -->
     <section id="story">
       <div class="sec-head reveal"><span class="tag">// init-journey.sh</span><h2>The state machine</h2></div>
@@ -219,8 +233,8 @@
     <section id="projects">
       <div class="sec-head reveal"><span class="tag">// build-systems.exe</span><h2>System modules</h2></div>
       <p class="sec-intro reveal">Not a project list — the modules of a finance system, the way I think about my own work.</p>
-      <div class="cartridge-shelf reveal" id="modules"></div>
       <div class="cart-detail reveal" id="cart-detail"></div>
+      <div class="cartridge-shelf reveal" id="modules"></div>
     </section>
 
     <!-- DIGITAL FOOTPRINT -->
@@ -352,6 +366,7 @@
         return '<div class="row"><span class="k">' + k + ':</span> <span class="' + cls + '">' + v + '</span></div>';
       }).join("");
       cartDetail.innerHTML = '<span class="ck">' + m.kind + '</span><h3>' + m.title + '</h3><p>' + m.desc + '</p><div class="readme">' + rows + '</div>';
+      cartDetail.classList.remove("loaded"); void cartDetail.offsetWidth; cartDetail.classList.add("loaded");
       document.querySelectorAll(".cartridge").forEach((c, i) => c.classList.toggle("sel", i === idx));
     }
     CONFIG.modules.forEach((m, idx) => {
@@ -359,7 +374,11 @@
       c.className = "cartridge";
       const icon = (m.icon && m.icon.trim()) ? '<img class="pixel" src="' + m.icon + '" alt="" />' : '';
       c.innerHTML = '<div class="cart-top"></div><div class="cart-label">' + icon + '<h3>' + m.name + '</h3><span class="kind">' + m.kind + '</span></div>';
-      c.addEventListener("click", () => showCart(idx));
+      c.addEventListener("click", () => {
+        c.classList.remove("inserting"); void c.offsetWidth; c.classList.add("inserting");
+        if (navigator.vibrate) { try { navigator.vibrate(18); } catch (e) {} }
+        showCart(idx);
+      });
       mbox.appendChild(c);
     });
     if (CONFIG.modules.length) showCart(0);
@@ -560,6 +579,31 @@
       bag.addEventListener("click", enter);
       bag.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " "){ e.preventDefault(); enter(); } });
     })();
+  </script>
+  <script>
+  (function(){
+    var timers=[];
+    function initStrip(el){
+      var speed=+el.dataset.speed||90, cell=14, gap=3;
+      var cols=Math.max(8,Math.floor((el.clientWidth-20)/(cell+gap)));
+      el.innerHTML=''; var cells=[];
+      for(var i=0;i<cols;i++){var d=document.createElement('div');d.className='px';el.appendChild(d);cells.push(d);}
+      var snake=[3,2,1,0], len=4, food=Math.floor(cols*0.2);
+      function draw(){cells.forEach(function(c){c.className='px';});
+        if(cells[food])cells[food].className='px food';
+        snake.forEach(function(idx,i){if(idx>=0&&idx<cols)cells[idx].className='px '+(i===0?'head':'on');});}
+      function step(){var head=snake[0]+1;
+        if(head>=cols){snake=[0];len=Math.min(8,3+Math.floor(Math.random()*4));
+          food=Math.floor(cols*(0.15+Math.random()*0.25));
+          for(var i=1;i<len;i++)snake.push(-i);draw();return;}
+        snake.unshift(head);
+        if(head===food){len++;food=Math.min(cols-1,head+3+Math.floor(Math.random()*4));}
+        while(snake.length>len)snake.pop();draw();}
+      draw();timers.push(setInterval(step,speed));
+    }
+    function boot(){timers.forEach(clearInterval);timers=[];document.querySelectorAll('[data-snake]').forEach(initStrip);}
+    boot(); window.addEventListener('resize',boot);
+  })();
   </script>
 </body>
 </html>
