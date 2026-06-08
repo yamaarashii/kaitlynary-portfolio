@@ -41,6 +41,9 @@
     .muted { color: rgba(250,247,245,.5); }
     .accent { color: var(--mint); }
     .peach { color: var(--peach); }
+    .vmint { color: var(--mint); }
+    .vslate { color: var(--slate); }
+    .vpeach { color: var(--peach); font-weight: 700; }
     .cursor { display: inline-block; width: 9px; height: 1.05em; background: var(--thistle); vertical-align: -2px; animation: blink 1s steps(1) infinite; }
     @keyframes blink { 50% { opacity: 0; } }
 
@@ -296,8 +299,8 @@
     const bootLines = [
       { t: "> kaitlyn.init()", c: "prompt" },
       { t: "loading finance-product-owner...", c: "muted" },
-      { t: "const role   = \"Finance Product Owner\";", c: "" },
-      { t: "const scope  = \"cross-border invoicing & payments · 60+ countries\";", c: "" },
+      { t: "const role   = \"Finance Product Owner\";", html: 'const role   = "<span class="vmint">Finance Product Owner</span>";' },
+      { t: "const scope  = \"cross-border invoicing & payments · 60+ countries\";", html: 'const scope  = "<span class="vslate">cross-border invoicing &amp; payments</span> · <span class="vpeach">60+ countries</span>";' },
       { t: "const status = \"in-love with finance ✨\";", c: "peach" },
       { t: "ready. select a command ↓", c: "accent" }
     ];
@@ -314,7 +317,7 @@
       (function typeChar() {
         div.textContent = line.t.slice(0, ci);
         if (ci <= line.t.length) { ci++; setTimeout(typeChar, speed); }
-        else { li++; setTimeout(typeLine, 120); }
+        else { if (line.html) div.innerHTML = line.html; li++; setTimeout(typeLine, 120); }
       })();
     }
     typeLine();
