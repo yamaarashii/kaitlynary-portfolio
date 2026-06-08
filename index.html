@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>kaitlyn.sys — Finance Product Owner</title>
+  <meta name="description" content="An interactive system terminal. Finance PO building cross-border invoicing & payments across 60+ countries." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..600&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/css/jsvectormap.min.css" />
+  <style>
+    :root {
+      --mocha: #332927; --cream: #FAF7F5; --thistle: #D6C8DF; --thistle-lt: #EAE3EF;
+      --mint: #B7C9B0; --peach: #E8C2A6; --pink: #F4C9DC; --slate: #A8C3C9;
+      --mocha-70: rgba(51,41,39,.7); --mocha-45: rgba(51,41,39,.45);
+      --mono: "Space Mono", ui-monospace, monospace;
+      --sans: "Space Grotesk", system-ui, sans-serif;
+      --serif: "Fraunces", Georgia, serif;
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--sans); background: var(--cream); color: var(--mocha); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+    .wrap { max-width: 920px; margin: 0 auto; padding: 0 24px; }
+    section { padding: 60px 0; scroll-margin-top: 24px; }
+    a { color: inherit; }
+
+    .reveal { opacity: 0; transform: translateY(18px); transition: opacity .6s ease, transform .6s ease; }
+    .reveal.in { opacity: 1; transform: none; }
+
+    /* TERMINAL WINDOW */
+    .terminal { background: var(--mocha); color: var(--cream); border-radius: var(--radius); padding: 0; margin: 48px 0 28px; box-shadow: 0 30px 60px -30px rgba(51,41,39,.5); overflow: hidden; }
+    .term-bar { display: flex; align-items: center; gap: 8px; padding: 13px 18px; background: rgba(255,255,255,.06); border-bottom: 1px solid rgba(255,255,255,.08); }
+    .dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot.r { background: var(--peach); } .dot.y { background: var(--thistle); } .dot.g { background: var(--mint); }
+    .term-title { margin-left: 10px; font-family: var(--mono); font-size: .8rem; color: rgba(250,247,245,.6); }
+    .term-body { padding: 26px 24px 30px; font-family: var(--mono); font-size: .96rem; min-height: 220px; }
+    .term-body .ln { white-space: pre-wrap; word-break: break-word; }
+    .prompt { color: var(--thistle); }
+    .muted { color: rgba(250,247,245,.5); }
+    .accent { color: var(--mint); }
+    .peach { color: var(--peach); }
+    .cursor { display: inline-block; width: 9px; height: 1.05em; background: var(--thistle); vertical-align: -2px; animation: blink 1s steps(1) infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* COMMAND NAV */
+    .cmds { display: flex; flex-direction: column; margin-top: 22px; opacity: 0; transition: opacity .5s ease; }
+    .cmds.show { opacity: 1; }
+    .cmd { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; text-align: left; cursor: pointer; font-family: var(--mono); font-size: .92rem; background: transparent; color: var(--mocha); border: none; border-bottom: 1px solid var(--thistle-lt); border-radius: 0; padding: 13px 10px; transition: background .2s ease, padding-left .2s ease; }
+    .cmd:last-child { border-bottom: none; }
+    .cmd:hover { background: var(--thistle-lt); padding-left: 18px; }
+    .cmd .c { color: #3f7d52; white-space: nowrap; }
+    .cmd .d { color: var(--mocha-45); font-family: var(--sans); font-size: .85rem; }
+
+    .hero-head { font-family: var(--serif); font-weight: 700; font-size: clamp(2.2rem,6vw,3.6rem); letter-spacing: -.02em; line-height: 1.05; margin-bottom: 10px; }
+    .hero-head .it { font-style: italic; }
+    .hero-sub { color: var(--mocha-70); max-width: 600px; }
+
+    .sec-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 10px; }
+    .sec-head .tag { font-family: var(--mono); font-size: .8rem; color: var(--mocha-45); }
+    .sec-head h2 { font-family: var(--serif); font-weight: 600; font-size: clamp(1.35rem,3.2vw,1.95rem); letter-spacing: -.01em; }
+    .sec-intro { color: var(--mocha-70); margin-bottom: 30px; max-width: 640px; }
+
+    /* STATE MACHINE */
+    .states { display: flex; flex-wrap: wrap; gap: 14px; align-items: stretch; }
+    .state { flex: 1; min-width: 180px; position: relative; background: #fff; border: 1px solid var(--thistle); border-radius: var(--radius); padding: 20px; cursor: default; transition: border-color .25s ease, transform .25s ease; }
+    .state:hover { border-color: var(--mocha); transform: translateY(-4px); }
+    .state .sid { font-family: var(--mono); font-size: .76rem; color: var(--mocha-45); }
+    .state h3 { font-family: var(--serif); font-weight: 600; font-size: 1.12rem; margin: 6px 0 12px; }
+    .state .detail { font-family: var(--mono); font-size: .8rem; color: var(--mocha-70); border-top: 1px dashed var(--thistle); padding-top: 12px; opacity: .55; transition: opacity .25s ease; }
+    .state:hover .detail { opacity: 1; }
+    .state .detail b { color: var(--mocha); }
+    .trigger { align-self: center; font-family: var(--mono); font-size: 1.1rem; color: var(--mocha-45); }
+    @media (max-width: 720px) { .trigger { display: none; } }
+
+    /* MODULES */
+    .modules { display: flex; flex-direction: column; gap: 16px; }
+    .module { background: #fff; border: 1px solid var(--thistle); border-radius: var(--radius); padding: 24px; }
+    .module .mtop { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; }
+    .module h3 { font-family: var(--serif); font-weight: 600; font-size: 1.3rem; }
+    .module .kind { font-family: var(--mono); font-size: .76rem; color: var(--mocha-45); text-transform: uppercase; letter-spacing: .08em; }
+    .module p { color: var(--mocha-70); margin: 8px 0 16px; max-width: 640px; }
+    .readme { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap: 10px; font-family: var(--mono); font-size: .8rem; }
+    .readme .row { background: var(--thistle-lt); border-radius: 10px; padding: 9px 12px; }
+    .readme .k { color: var(--mocha-45); } .readme .v { color: var(--mocha); font-weight: 700; }
+    .status-live { color: #3f7d52; }
+
+    .notes-card { background: var(--mocha); color: var(--cream); border-radius: var(--radius); padding: 32px; }
+    .notes-card a.btn, .console a.btn { display: inline-block; margin-top: 16px; font-family: var(--mono); font-size: .88rem; text-decoration: none; color: var(--mocha); background: var(--thistle); padding: 10px 18px; border-radius: 999px; }
+
+    /* WRITING CARDS (live Substack) */
+    .cards { display: grid; grid-template-columns: repeat(2,1fr); gap: 18px; }
+    .card { display: flex; flex-direction: column; background: #fff; border: 1px solid var(--thistle); border-radius: var(--radius); overflow: hidden; text-decoration: none; color: inherit; transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease; }
+    .card:hover { transform: translateY(-5px); box-shadow: 0 16px 36px -22px rgba(51,41,39,.45); border-color: var(--mocha); }
+    .card .thumb { aspect-ratio: 16/9; background: var(--thistle); overflow: hidden; }
+    .card .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .card .thumb.ph { display: flex; align-items: center; justify-content: center; font-family: var(--serif); font-style: italic; font-size: 1.8rem; color: rgba(51,41,39,.5); }
+    .card .body { padding: 20px 22px 24px; display: flex; flex-direction: column; flex: 1; }
+    .card .date { font-family: var(--mono); font-size: .74rem; letter-spacing: .04em; color: var(--mocha-45); }
+    .card h3 { font-family: var(--serif); font-weight: 600; font-size: 1.18rem; line-height: 1.2; margin: 8px 0 10px; }
+    .card .ex { font-size: .92rem; color: var(--mocha-70); flex: 1; }
+    .card .read { margin-top: 14px; font-family: var(--mono); font-size: .82rem; color: #2f7a4f; }
+    .feed-msg { padding: 32px; text-align: center; font-family: var(--mono); font-size: .9rem; color: var(--mocha-70); border: 1px dashed var(--thistle); border-radius: var(--radius); }
+    .feed-msg a { color: var(--mocha); font-weight: 700; }
+    .see-more-wrap { text-align: center; margin-top: 22px; }
+    .see-more-btn { font-family: var(--mono); background: transparent; border: 1px solid var(--mocha); color: var(--mocha); padding: 10px 22px; border-radius: 999px; font-size: .85rem; cursor: pointer; transition: background .2s ease, color .2s ease; }
+    .see-more-btn:hover { background: var(--mocha); color: var(--cream); }
+
+    /* DIGITAL FOOTPRINT MAP */
+    #worldmap { width: 100%; height: 420px; }
+    .map-note { font-family: var(--mono); font-size: .82rem; color: var(--mocha-45); margin-top: 12px; }
+    .jvm-tooltip { background: var(--mocha) !important; border-radius: 8px !important; font-family: var(--mono) !important; color: var(--cream) !important; }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 10px; }
+    .chip { font-family: var(--mono); font-size: .85rem; background: var(--thistle); border-radius: 999px; padding: 8px 15px; }
+
+    /* CONSOLE CONTACT */
+    .console { background: var(--mocha); color: var(--cream); border-radius: var(--radius); overflow: hidden; }
+    .console .out { font-family: var(--mono); font-size: .9rem; padding: 22px 22px 8px; min-height: 150px; max-height: 320px; overflow-y: auto; }
+    .console .out .ln { white-space: pre-wrap; word-break: break-word; margin-bottom: 3px; }
+    .console .out .in { color: var(--thistle); } .console .out .err { color: var(--peach); }
+    .console .inrow { display: flex; align-items: center; gap: 8px; padding: 12px 22px 22px; border-top: 1px solid rgba(255,255,255,.08); font-family: var(--mono); }
+    .console .ps { color: var(--mint); white-space: nowrap; }
+    .console input { flex: 1; background: transparent; border: none; outline: none; color: var(--cream); font-family: var(--mono); font-size: .9rem; }
+    .console .hintbtns { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 22px 22px; }
+    .console .hintbtns button { font-family: var(--mono); font-size: .8rem; background: rgba(255,255,255,.06); color: var(--cream); border: 1px solid rgba(255,255,255,.16); border-radius: 999px; padding: 7px 13px; cursor: pointer; transition: background .2s ease; }
+    .console .hintbtns button:hover { background: rgba(214,200,223,.18); }
+
+    /* CUTE easter egg overlay */
+    #cute { position: fixed; inset: 0; z-index: 99; background: var(--pink); display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .4s ease; }
+    #cute.on { opacity: .92; }
+    #coin-canvas { position: fixed; inset: 0; z-index: 95; pointer-events: none; }
+
+    /* LOADER — open-me money bag */
+    #loader { position: fixed; inset: 0; z-index: 90; background: var(--cream); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; transition: opacity .6s ease; }
+    #loader.gone { opacity: 0; pointer-events: none; }
+    #loader .bag { font-size: clamp(4rem,16vw,7.5rem); line-height: 1; cursor: pointer; user-select: none; animation: bagBob 2.4s ease-in-out infinite; transition: transform .2s ease; }
+    #loader .bag:hover { transform: scale(1.06) rotate(-3deg); }
+    #loader .bag:active { transform: scale(.93); }
+    @keyframes bagBob { 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(-10px);} }
+    #loader .open { font-family: var(--mono); font-size: 1rem; letter-spacing: .14em; color: var(--mocha); }
+    #loader .hint { font-family: var(--mono); font-size: .76rem; color: var(--mocha-45); }
+
+    /* GAME CARTRIDGES */
+    .cartridge-shelf { display: flex; gap: 26px; flex-wrap: wrap; padding: 6px 0; }
+    .cartridge { width: 140px; height: 180px; background: var(--mocha); border-radius: 8px 8px 4px 4px; position: relative; cursor: pointer; transition: transform .3s ease, box-shadow .3s ease; box-shadow: 8px 8px 0 rgba(51,41,39,.12); }
+    .cartridge:hover { transform: translateY(-10px) rotate(-2deg); }
+    .cartridge.sel { transform: translateY(-6px); box-shadow: 8px 8px 0 var(--thistle); }
+    .cart-top { height: 18px; width: 80px; background: #1c1714; margin: 12px auto 0; border-radius: 4px; }
+    .cart-label { background: var(--cream); margin: 14px 10px; height: 116px; border-radius: 3px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 8px; gap: 6px; }
+    .cart-label img.pixel { width: 34px; height: 34px; }
+    .cart-label h3 { font-family: var(--serif); font-size: .92rem; line-height: 1.15; }
+    .cart-label .kind { font-family: var(--mono); font-size: .62rem; color: var(--mocha-45); text-transform: uppercase; letter-spacing: .08em; }
+    .cart-detail { margin-top: 26px; background: #fff; border: 1px solid var(--thistle); border-radius: var(--radius); padding: 24px; }
+    .cart-detail .ck { font-family: var(--mono); font-size: .7rem; color: var(--mocha-45); text-transform: uppercase; letter-spacing: .08em; }
+    .cart-detail h3 { font-family: var(--serif); font-weight: 600; font-size: 1.25rem; margin: 4px 0; }
+    .cart-detail p { color: var(--mocha-70); margin: 8px 0 16px; max-width: 640px; }
+    .cart-detail .readme { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap: 10px; font-family: var(--mono); font-size: .8rem; }
+    .cart-detail .row { background: var(--thistle-lt); border-radius: 10px; padding: 9px 12px; }
+    .cart-detail .k { color: var(--mocha-45); } .cart-detail .v { color: var(--mocha); font-weight: 700; }
+    .cart-detail .status-live { color: #3f7d52; }
+
+    /* PERSONAL ALBUM */
+    .album { display: flex; gap: 20px; overflow-x: auto; padding: 8px 4px 24px; scroll-snap-type: x mandatory; }
+    .album::-webkit-scrollbar { height: 8px; }
+    .album::-webkit-scrollbar-thumb { background: var(--thistle); border-radius: 999px; }
+    .polaroid { flex: 0 0 auto; width: 220px; background: #fff; border: 1px solid var(--thistle); border-radius: 6px; padding: 12px 12px 0; box-shadow: 6px 6px 0 rgba(51,41,39,.08); scroll-snap-align: center; transition: transform .25s ease; }
+    .polaroid:nth-child(odd) { transform: rotate(-1.6deg); } .polaroid:nth-child(even) { transform: rotate(1.4deg); }
+    .polaroid:hover { transform: rotate(0) translateY(-5px); }
+    .polaroid .ph-img { width: 100%; aspect-ratio: 1/1; border-radius: 3px; overflow: hidden; background: var(--thistle-lt); display: flex; align-items: center; justify-content: center; }
+    .polaroid .ph-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .polaroid .ph-img span { font-size: 2.4rem; }
+    .polaroid .cap { font-family: var(--serif); font-style: italic; font-size: .92rem; text-align: center; padding: 12px 4px 16px; color: var(--mocha-70); }
+
+    .pixel { image-rendering: pixelated; image-rendering: crisp-edges; }
+    #cute .msg { font-family: var(--mono); color: #7a3b54; font-size: clamp(1rem,3vw,1.5rem); text-align: center; padding: 24px; }
+
+    footer { padding: 50px 0; text-align: center; font-family: var(--mono); font-size: .8rem; color: var(--mocha-45); }
+    @media (max-width: 640px) { .cmds { grid-template-columns: 1fr; } .cards { grid-template-columns: 1fr; } }
+    @media (prefers-reduced-motion: reduce) { .cursor { animation: none; } }
+  </style>
+</head>
+<body>
+  <div id="cute"><div class="msg">⚠ System error: too much cuteness detected ✨<br /><span style="font-size:.8em">recovering...</span></div></div>
+  <canvas id="coin-canvas"></canvas>
+  <div id="loader">
+    <div class="bag" id="bag" role="button" tabindex="0" aria-label="Open the bag to enter">💰</div>
+    <div class="open">open me</div>
+    <div class="hint">click the bag to enter</div>
+  </div>
+
+  <div class="wrap">
+    <!-- TERMINAL HERO -->
+    <div class="terminal">
+      <div class="term-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="term-title">kaitlyn@portfolio: ~/welcome</span></div>
+      <div class="term-body" id="boot"></div>
+    </div>
+    <div class="cmds" id="cmds">
+      <button class="cmd" data-go="story"><span class="c">$ init-journey.sh</span><span class="d">the story — how money kept pulling me back</span></button>
+      <button class="cmd" data-go="projects"><span class="c">$ build-systems.exe</span><span class="d">system modules — what I build</span></button>
+      <button class="cmd" data-go="footprint"><span class="c">$ trace-footprint.log</span><span class="d">digital footprint — where the work shipped</span></button>
+      <button class="cmd" data-go="notes"><span class="c">$ show-notes.md</span><span class="d">writing — field notes from the desk</span></button>
+      <button class="cmd" data-go="personality"><span class="c">$ debug-personality.css</span><span class="d">personal album — life off the clock</span></button>
+      <button class="cmd" data-go="contact"><span class="c">$ ./connect.sh</span><span class="d">developer console — let's talk</span></button>
+    </div>
+
+    <!-- STORY: STATE MACHINE -->
+    <section id="story">
+      <div class="sec-head reveal"><span class="tag">// init-journey.sh</span><h2>The state machine</h2></div>
+      <p class="sec-intro reveal">Every state had an input, a process, and an output. Hover a state to inspect it. Triggers (→) are the events that moved me forward.</p>
+      <div class="states reveal" id="states"></div>
+    </section>
+
+    <!-- PROJECTS: MODULES -->
+    <section id="projects">
+      <div class="sec-head reveal"><span class="tag">// build-systems.exe</span><h2>System modules</h2></div>
+      <p class="sec-intro reveal">Not a project list — the modules of a finance system, the way I think about my own work.</p>
+      <div class="cartridge-shelf reveal" id="modules"></div>
+      <div class="cart-detail reveal" id="cart-detail"></div>
+    </section>
+
+    <!-- DIGITAL FOOTPRINT -->
+    <section id="footprint">
+      <div class="sec-head reveal"><span class="tag">// trace --footprint</span><h2>Digital footprint</h2></div>
+      <p class="sec-intro reveal">Where the work shipped — dark marks the countries in scope.</p>
+      <div id="worldmap" class="reveal"></div>
+      <p class="map-note reveal">EU · LATAM · US · Canada · Asia — 60+ countries.</p>
+    </section>
+
+    <!-- NOTES -->
+    <section id="notes">
+      <div class="sec-head reveal"><span class="tag">// show-notes.md</span><h2>Field notes</h2></div>
+      <p class="sec-intro reveal">Long-form thinking on finance product, the BA/PO craft, and building with AI — pulled live from Substack.</p>
+      <div class="cards reveal" id="cards"></div>
+      <div class="see-more-wrap" id="see-more-wrap"></div>
+    </section>
+
+    <!-- PERSONALITY -->
+    <section id="personality">
+      <div class="sec-head reveal"><span class="tag">// debug-personality.css</span><h2>Personal album</h2></div>
+      <p class="sec-intro reveal"><span style="font-family:var(--mono)">const status = "in-love with finance ✨";</span></p>
+      <div class="album reveal" id="album"></div>
+    </section>
+
+    <!-- CONTACT CONSOLE -->
+    <section id="contact">
+      <div class="sec-head reveal"><span class="tag">// connect</span><h2>Developer console</h2></div>
+      <p class="sec-intro reveal">Type a command, or tap one below. Try <span style="font-family:var(--mono)">help</span>.</p>
+      <div class="console reveal">
+        <div class="out" id="cout"></div>
+        <div class="hintbtns" id="hints"></div>
+        <div class="inrow"><span class="ps">kaitlyn@portfolio:~$</span><input id="cin" autocomplete="off" spellcheck="false" placeholder="type 'help' and hit enter" /></div>
+      </div>
+    </section>
+  </div>
+
+  <footer>© <span id="yr"></span> kaitlyn.sys — built like a product, not a CV.</footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/js/jsvectormap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/maps/world.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/matter-js@0.19.0/build/matter.min.js"></script>
+  <script>
+    const CONFIG = {
+      email: "phuonglt13.sic@gmail.com",
+      linkedin: "https://www.linkedin.com/in/phuonglt13/",
+      substack: "https://kaitlynway.substack.com",
+      states: [
+        { id: "S0 · 2019", title: "The Curious Investor", input: "curiosity about how money moves", proc: "reading financial statements (and losing to balance sheets)", output: "a love for understanding businesses" },
+        { id: "S1 · 2020", title: "The Fintech Explorer", input: "Vietnam's fintech wave", proc: "competitions: TNEX, FWD, Zalo, MoMo", output: "product thinking" },
+        { id: "S2 · 2022", title: "The Business Analyst", input: "the software world + Agile", proc: "real finance & enterprise systems", output: "a sharp BA craft" },
+        { id: "S3 · now", title: "The Product Owner", input: "deep finance systems", proc: "building invoicing & payments across 60+ countries", output: "systems thinking at scale" }
+      ],
+      modules: [
+        { name: "Invoicing Engine", kind: "Core", icon: "", title: "Cross-border Invoicing & Payments", desc: "The heavyweight. E-invoicing compliance, payment flows and ERP integrations that move money across 60+ countries.", meta: { Complexity: "High", Tools: "SAP S/4HANA · Kyriba · SQL", Impact: "60+ countries live", Status: "In Production" } },
+        { name: "Data Pipeline", kind: "BA/PO", icon: "", title: "Requirements → Shippable Features", desc: "The BA/PO brain: turning messy, contradictory requirements into clean data flows and acceptance criteria devs can build.", meta: { Complexity: "Medium", Tools: "Jira · Confluence · BPMN", Impact: "Faster, clearer delivery", Status: "Ongoing" } },
+        { name: "UX Layer", kind: "Design", icon: "", title: "Numbers → Usable Screens", desc: "The soft layer: working with design and end-users so dry finance data becomes interfaces people actually enjoy.", meta: { Complexity: "Medium", Tools: "Figma · user interviews", Impact: "Clearer finance UX", Status: "Live" } },
+        { name: "Workshop Lab", kind: "Agile", icon: "", title: "Workshops & Stakeholder Alignment", desc: "Running discovery workshops with users and stakeholders, plus the Scrum ceremonies that keep everyone honest — turning messy conversations into an aligned, prioritised backlog.", meta: { Complexity: "Medium", Tools: "Scrum · Miro · Confluence", Impact: "Aligned stakeholders, fewer reworks", Status: "Ongoing" } },
+        { name: "Delivery", kind: "Release", icon: "", title: "Iterative Delivery & Release", desc: "Driving each increment from backlog to production — coordinating dev, QA and external vendors through sprints, UAT and go-live across multiple markets.", meta: { Complexity: "High", Tools: "Jira · UAT · vendor QC", Impact: "Predictable, on-time releases", Status: "In Production" } }
+      ],
+      album: [
+        { emo: "🥾", caption: "trekking", image: "" },
+        { emo: "🏝️", caption: "island hopping", image: "" },
+        { emo: "📚", caption: "always reading", image: "" },
+        { emo: "🌏", caption: "local exploring", image: "" }
+      ],
+      fillCountries: ["FR","DE","ES","IT","NL","BE","PT","IE","AT","FI","DK","SE","NO","CH","GB","PL","CZ","SK","SI","HU","RO","BG","GR","HR","LU","LT","LV","EE","US","CA","MX","GT","CR","PA","CO","VE","EC","PE","BO","CL","AR","UY","PY","BR","DO","CN","VN","SG","TH","MY","PH","ID","JP","KR","IN","HK","TW","BD","PK","LK","KH","LA","MM","NP"]
+    };
+
+    const el = (id) => document.getElementById(id);
+    el("yr").textContent = new Date().getFullYear();
+    function fmtDate(str){ if(!str) return ""; const d=new Date(str); return isNaN(d)?"":d.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"}); }
+
+
+    /* ---- boot typing ---- */
+    const bootLines = [
+      { t: "> kaitlyn.init()", c: "prompt" },
+      { t: "loading finance-product-owner...", c: "muted" },
+      { t: "const role   = \"Finance Product Owner\";", c: "" },
+      { t: "const scope  = \"cross-border invoicing & payments · 60+ countries\";", c: "" },
+      { t: "const status = \"in-love with finance ✨\";", c: "peach" },
+      { t: "ready. select a command ↓", c: "accent" }
+    ];
+    const boot = el("boot");
+    let li = 0;
+    function typeLine() {
+      if (li >= bootLines.length) { el("cmds").classList.add("show"); return; }
+      const line = bootLines[li];
+      const div = document.createElement("div");
+      div.className = "ln " + (line.c || "");
+      boot.appendChild(div);
+      let ci = 0;
+      const speed = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 16;
+      (function typeChar() {
+        div.textContent = line.t.slice(0, ci);
+        if (ci <= line.t.length) { ci++; setTimeout(typeChar, speed); }
+        else { li++; setTimeout(typeLine, 120); }
+      })();
+    }
+    typeLine();
+
+    /* ---- command nav ---- */
+    document.querySelectorAll(".cmd").forEach(b => {
+      b.addEventListener("click", () => {
+        const t = el(b.dataset.go);
+        if (t) t.scrollIntoView({ behavior: "smooth" });
+      });
+    });
+
+    /* ---- states ---- */
+    const sbox = el("states");
+    CONFIG.states.forEach((s, i) => {
+      const d = document.createElement("div");
+      d.className = "state";
+      d.innerHTML = '<div class="sid">' + s.id + '</div><h3>' + s.title + '</h3>' +
+        '<div class="detail"><b>Input:</b> ' + s.input + '<br /><b>Process:</b> ' + s.proc + '<br /><b>Output:</b> ' + s.output + '</div>';
+      sbox.appendChild(d);
+      if (i < CONFIG.states.length - 1) { const tr = document.createElement("div"); tr.className = "trigger"; tr.textContent = "→"; sbox.appendChild(tr); }
+    });
+
+    /* ---- modules as game cartridges ---- */
+    const mbox = el("modules");
+    const cartDetail = el("cart-detail");
+    function showCart(idx){
+      const m = CONFIG.modules[idx];
+      const rows = Object.keys(m.meta).map(k => {
+        const v = m.meta[k];
+        const cls = (k === "Status" && /live|production/i.test(v)) ? "v status-live" : "v";
+        return '<div class="row"><span class="k">' + k + ':</span> <span class="' + cls + '">' + v + '</span></div>';
+      }).join("");
+      cartDetail.innerHTML = '<span class="ck">' + m.kind + '</span><h3>' + m.title + '</h3><p>' + m.desc + '</p><div class="readme">' + rows + '</div>';
+      document.querySelectorAll(".cartridge").forEach((c, i) => c.classList.toggle("sel", i === idx));
+    }
+    CONFIG.modules.forEach((m, idx) => {
+      const c = document.createElement("div");
+      c.className = "cartridge";
+      const icon = (m.icon && m.icon.trim()) ? '<img class="pixel" src="' + m.icon + '" alt="" />' : '';
+      c.innerHTML = '<div class="cart-top"></div><div class="cart-label">' + icon + '<h3>' + m.name + '</h3><span class="kind">' + m.kind + '</span></div>';
+      c.addEventListener("click", () => showCart(idx));
+      mbox.appendChild(c);
+    });
+    if (CONFIG.modules.length) showCart(0);
+
+    /* ---- personal album ---- */
+    const albox = el("album");
+    CONFIG.album.forEach(a => {
+      const d = document.createElement("div");
+      d.className = "polaroid";
+      const img = (a.image && a.image.trim()) ? '<img src="' + a.image + '" alt="" loading="lazy" />' : '<span>' + (a.emo || "📷") + '</span>';
+      d.innerHTML = '<div class="ph-img">' + img + '</div><div class="cap">' + (a.caption || "") + '</div>';
+      albox.appendChild(d);
+    });
+
+    /* ---- console contact ---- */
+    const cout = el("cout"), cin = el("cin");
+    function print(text, cls) { const d = document.createElement("div"); d.className = "ln " + (cls || ""); d.textContent = text; cout.appendChild(d); cout.scrollTop = cout.scrollHeight; }
+    print("kaitlyn.sys console — type 'help' to begin.", "muted");
+    const commands = {
+      "help": () => print("available: contact --email | contact --linkedin | contact --substack | contact --hire | cute | clear"),
+      "contact --email": () => print(CONFIG.email),
+      "contact --linkedin": () => print(CONFIG.linkedin),
+      "contact --substack": () => print(CONFIG.substack),
+      "contact --hire": () => { print("opening hire request..."); window.location.href = "mailto:" + CONFIG.email + "?subject=Let's%20work%20together"; },
+      "cute": () => cute(),
+      "clear": () => { cout.innerHTML = ""; }
+    };
+    function run(raw) {
+      const cmd = raw.trim(); if (!cmd) return;
+      print("kaitlyn@portfolio:~$ " + cmd, "in");
+      const fn = commands[cmd.toLowerCase()];
+      if (fn) fn(); else print("command not found: " + cmd + "  (try 'help')", "err");
+    }
+    cin.addEventListener("keydown", (e) => { if (e.key === "Enter") { run(cin.value); cin.value = ""; } });
+    ["help", "contact --email", "contact --linkedin", "contact --hire", "cute"].forEach(c => {
+      const b = document.createElement("button"); b.textContent = c;
+      b.addEventListener("click", () => { run(c); cin.focus(); });
+      el("hints").appendChild(b);
+    });
+
+    /* ---- cute easter egg ---- */
+    function cute() {
+      print("⚠ warning: cuteness levels critical", "err");
+      const o = el("cute"); o.classList.add("on");
+      setTimeout(() => o.classList.remove("on"), 1900);
+    }
+
+    /* ---- digital footprint map ---- */
+    (function initMap(){
+      try {
+        const values = {};
+        CONFIG.fillCountries.forEach(c => { values[c] = 1; });
+        new jsVectorMap({
+          selector: "#worldmap", map: "world", zoomButtons: false, zoomOnScroll: false,
+          regionsSelectable: false, backgroundColor: "transparent",
+          regionStyle: { initial: { fill: "#EAE3EF", stroke: "#FAF7F5", strokeWidth: 0.4 } },
+          series: { regions: [{ attribute: "fill", values: values, scale: ["#332927"], normalizeFunction: "polynomial" }] }
+        });
+      } catch(e){ el("worldmap").innerHTML = '<p class="map-note">Map unavailable.</p>'; }
+    })();
+
+    /* ---- writing: live Substack feed ---- */
+    const VISIBLE = 2;
+    (async function loadPosts(){
+      const box = el("cards");
+      try {
+        const res = await fetch("/api/posts");
+        const data = await res.json();
+        const posts = (data && data.posts) || [];
+        if (data.error || posts.length === 0) {
+          box.outerHTML = '<div class="feed-msg">Posts are taking a break. Read everything on <a href="'+CONFIG.substack+'" target="_blank" rel="noopener">Substack &rarr;</a></div>';
+          return;
+        }
+        box.innerHTML = posts.map(p => (
+          '<a class="card" href="'+p.link+'" target="_blank" rel="noopener">' +
+          (p.coverImage ? '<div class="thumb"><img src="'+p.coverImage+'" alt="" loading="lazy"/></div>' : '<div class="thumb ph">'+((p.title||"K")[0])+'</div>') +
+          '<div class="body"><span class="date">'+fmtDate(p.pubDate)+'</span><h3>'+p.title+'</h3><p class="ex">'+(p.excerpt||"")+'</p><span class="read">$ read &rarr;</span></div>' +
+          '</a>'
+        )).join("");
+        if (posts.length > VISIBLE) {
+          const cardEls = box.querySelectorAll(".card");
+          cardEls.forEach((c,i)=>{ if(i>=VISIBLE) c.style.display="none"; });
+          const hidden = posts.length - VISIBLE;
+          const btn = document.createElement("button");
+          btn.type="button"; btn.className="see-more-btn"; btn.textContent="$ load --more ("+hidden+")";
+          let expanded=false;
+          btn.addEventListener("click",()=>{ expanded=!expanded; cardEls.forEach((c,i)=>{ if(i>=VISIBLE) c.style.display=expanded?"flex":"none"; }); btn.textContent=expanded?"$ load --less":"$ load --more ("+hidden+")"; });
+          el("see-more-wrap").appendChild(btn);
+        }
+      } catch(e){
+        box.outerHTML = '<div class="feed-msg">Couldn\u0027t load posts right now. Read everything on <a href="'+CONFIG.substack+'" target="_blank" rel="noopener">Substack &rarr;</a></div>';
+      }
+    })();
+
+    /* ---- reveal ---- */
+    const io = new IntersectionObserver((ents) => {
+      ents.forEach(en => { if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); } });
+    }, { threshold: 0.12 });
+    document.querySelectorAll(".reveal").forEach(s => io.observe(s));
+
+    /* ---- loading screen + currency burst (Matter.js) ---- */
+    (function(){
+      const loader = el("loader"), bag = el("bag");
+      if (!loader || !bag) return;
+      document.body.style.overflow = "hidden";
+      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      let fountainStart = null;
+
+      if (!reduce && typeof Matter !== "undefined") {
+        const canvas = el("coin-canvas");
+        const ctx = canvas.getContext("2d");
+        let W, H, dpr;
+        function resize(){
+          dpr = Math.min(window.devicePixelRatio || 1, 2);
+          W = window.innerWidth; H = window.innerHeight;
+          canvas.width = W * dpr; canvas.height = H * dpr;
+          canvas.style.width = W + "px"; canvas.style.height = H + "px";
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
+        resize();
+        window.addEventListener("resize", resize);
+
+        const { Engine, World, Bodies, Body } = Matter;
+        const engine = Engine.create();
+        engine.gravity.y = 1;
+        const symbols = ["$", "€", "¥", "\u20AB", "\u00A3"];
+        let bodies = [], running = false, rafId = null, stopAt = 0;
+
+        function start(ox, oy){
+          if (running) return;
+          running = true;
+          const wo = { isStatic: true };
+          World.add(engine.world, [
+            Bodies.rectangle(W / 2, H + 30, W + 200, 60, wo),
+            Bodies.rectangle(-30, H / 2, 60, H * 3, wo),
+            Bodies.rectangle(W + 30, H / 2, 60, H * 3, wo)
+          ]);
+          for (let i = 0; i < 34; i++){
+            const r = 14 + Math.random() * 7;
+            const b = Bodies.circle(ox + (Math.random() - 0.5) * 40, oy + (Math.random() - 0.5) * 40, r, {
+              restitution: 0.3, friction: 0.4, frictionAir: 0.012
+            });
+            const ang = -Math.PI / 2 + (Math.random() - 0.5) * Math.PI * 0.9;
+            const sp = 9 + Math.random() * 9;
+            Body.setVelocity(b, { x: Math.cos(ang) * sp, y: Math.sin(ang) * sp });
+            Body.setAngularVelocity(b, (Math.random() - 0.5) * 0.25);
+            b.glyph = symbols[i % symbols.length];
+            b.r = r;
+            bodies.push(b);
+            World.add(engine.world, b);
+          }
+          stopAt = performance.now() + 7000;
+          loop();
+        }
+        function loop(){
+          Engine.update(engine, 1000 / 60);
+          ctx.clearRect(0, 0, W, H);
+          const now = performance.now();
+          const fading = now > stopAt;
+          const alpha = fading ? Math.max(0, 1 - (now - stopAt) / 1200) : 1;
+          ctx.globalAlpha = alpha;
+          ctx.strokeStyle = "#332927";
+          ctx.lineWidth = 1.3;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          bodies.forEach(b => {
+            ctx.save();
+            ctx.translate(b.position.x, b.position.y);
+            ctx.rotate(b.angle);
+            ctx.font = Math.round(b.r * 1.9) + 'px "Space Grotesk", sans-serif';
+            ctx.strokeText(b.glyph, 0, 1);
+            ctx.restore();
+          });
+          ctx.globalAlpha = 1;
+          if (fading && alpha <= 0){ cleanup(); return; }
+          rafId = requestAnimationFrame(loop);
+        }
+        function cleanup(){
+          if (rafId) cancelAnimationFrame(rafId);
+          ctx.clearRect(0, 0, W, H);
+          World.clear(engine.world, false);
+          Engine.clear(engine);
+          bodies = []; running = false;
+        }
+        fountainStart = start;
+      }
+
+      function enter(){
+        if (loader.classList.contains("gone")) return;
+        if (fountainStart){
+          const rc = bag.getBoundingClientRect();
+          fountainStart(rc.left + rc.width / 2, rc.top + rc.height / 2);
+        }
+        loader.classList.add("gone");
+        document.body.style.overflow = "";
+        setTimeout(() => { loader.style.display = "none"; }, 650);
+      }
+      bag.addEventListener("click", enter);
+      bag.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " "){ e.preventDefault(); enter(); } });
+    })();
+  </script>
+</body>
+</html>
